@@ -17,7 +17,7 @@ $rol  = $sess['rol'];
 <link rel="icon" href="assets/icon.jpg" type="image/x-icon">
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css">
+<link rel="stylesheet" href="assets/css/app.css?v=1.0">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- OneSignal SDK -->
