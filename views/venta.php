@@ -1,7 +1,10 @@
 <!-- ═══ VENTA ═══════════════════════════════════════════ -->
 <div class="view on" id="view-venta">
   <div class="card">
-    <div class="card-title">Nueva Venta</div>
+    <div class="card-hdr">
+      <div class="card-title">Nueva Venta</div>
+      <input type="date" id="v-fecha" style="background: var(--s2); color: var(--txt2); border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; font-size: 0.8rem; font-family: 'DM Sans'; outline: none; cursor: pointer; width:35%;" title="Cambiar fecha de la venta">
+    </div>
 
     <div class="sec">Tipo de producto</div>
     <div class="chips" id="v-tipo-chips"></div>

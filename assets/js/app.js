@@ -57,6 +57,7 @@ async function init() {
   await Promise.all([loadTipos(), loadTamanos(), loadProductosCatalogo()]);
   renderVentaTipos();
   initCompraFecha();
+  initVentaFecha();
   checkAlertas();
 }
 

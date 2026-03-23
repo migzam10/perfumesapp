@@ -85,7 +85,13 @@ body {
 .nav {
   display: flex;
   background: var(--s1);
-  border-bottom: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom); /* Soporte para la barra inferior de los iPhone */
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -140,7 +146,7 @@ body {
 /* ── Views ───────────────────────────────────────────── */
 .view {
   display: none;
-  padding: 8px;
+  padding: 8px 8px 80px 8px; /* Margen inferior de 80px para no quedar oculto bajo el menú */
   animation: fi .2s ease;
 }
 
@@ -700,7 +706,7 @@ textarea {
 /* ── Toast ───────────────────────────────────────────── */
 .toast {
   position: fixed;
-  bottom: 66px;
+  bottom: 90px; /* Elevado para que flote sobre el menú */
   left: 50%;
   transform: translateX(-50%);
   background: var(--ok);
@@ -779,6 +785,7 @@ textarea {
         flex-direction: column;
         justify-content: flex-start;
         padding-top: 70px; /* Deja espacio para el logo arriba */
+        padding-bottom: 0; /* Quitamos el relleno de iPhone en PC */
         border-top: none;
         border-right: 1px solid var(--border, #eaeaea);
     }

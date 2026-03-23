@@ -57,18 +57,38 @@ function ventas_nueva(): void {
 
     $total  = array_sum(array_map(fn($i) => $i['precio'] * ($i['cantidad'] ?? 1), $d['items']));
     $codigo = genCodigo('V');
+    $fecha  = $d['fecha'] ?? date('Y-m-d');
     $db     = db();
 
-    // Verificar si el día de hoy ya está cerrado
-    $dia_cerrado = $db->query("SELECT id FROM cierres WHERE fecha = CURDATE()")->fetch();
-    if ($dia_cerrado) {
+    // Verificar si el día de la venta ya está cerrado
+    $dia_cerrado = $db->prepare("SELECT id FROM cierres WHERE fecha = ?");
+    $dia_cerrado->execute([$fecha]);
+    if ($dia_cerrado->fetch()) {
         jsonError('El día ya está cerrado. ¿Desea reabrirlo para hacer esta venta?');
+    }
+
+    // Validar el stock real antes de iniciar el guardado
+    $cantidades = [];
+    foreach ($d['items'] as $item) {
+        if (!empty($item['producto_id'])) {
+            $pid = $item['producto_id'];
+            if (!isset($cantidades[$pid])) $cantidades[$pid] = 0;
+            $cantidades[$pid] += ($item['cantidad'] ?? 1);
+        }
+    }
+    foreach ($cantidades as $pid => $req_qty) {
+        $p_stmt = $db->prepare("SELECT nombre, stock FROM productos WHERE id = ?");
+        $p_stmt->execute([$pid]);
+        $prod = $p_stmt->fetch();
+        if ($prod && $prod['stock'] < $req_qty) {
+            jsonError("Stock insuficiente para: {$prod['nombre']}. Disponible: {$prod['stock']}, Solicitado: {$req_qty}");
+        }
     }
 
     $db->beginTransaction();
     try {
-        $db->prepare("INSERT INTO ventas (codigo, usuario_id, fecha, total, nota) VALUES (?,?,CURDATE(),?,?)")
-           ->execute([$codigo, $sess['user_id'], $total, $d['nota'] ?? null]);
+        $db->prepare("INSERT INTO ventas (codigo, usuario_id, fecha, total, nota) VALUES (?,?,?,?,?)")
+           ->execute([$codigo, $sess['user_id'], $fecha, $total, $d['nota'] ?? null]);
         $venta_id = $db->lastInsertId();
 
         $stmt = $db->prepare(

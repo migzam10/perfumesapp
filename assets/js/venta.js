@@ -2,6 +2,10 @@
 // ============================================================
 // VENTA
 // ============================================================
+function initVentaFecha() {
+  document.getElementById('v-fecha').value = todayStr();
+}
+
 function renderVentaTipos() {
   const c = document.getElementById('v-tipo-chips');
   c.innerHTML = S.tipos.filter(t=>t.activo==1).map(t=>
@@ -77,8 +81,17 @@ function cartAdd() {
   const precio = parseInt(document.getElementById('v-precio').value)||0;
   if(precio<=0)  { toast('Ingresa un precio válido', true); return; }
   const cant = Math.max(1, parseInt(document.getElementById('v-cant').value)||1);
-  const nota = document.getElementById('v-nota-item').value.trim();
+  
   const prod = S.productos.find(p=>p.id==S.vProdId);
+
+  // Validar que no sobrepase el stock disponible sumando lo que ya está en el carrito
+  const inCart = S.cart.reduce((sum, i) => i.producto_id == S.vProdId ? sum + i.cantidad : sum, 0);
+  if (prod && (inCart + cant) > prod.stock) {
+    toast(`Stock insuficiente. Quedan ${prod.stock - inCart} uds disponibles.`, true);
+    return;
+  }
+
+  const nota = document.getElementById('v-nota-item').value.trim();
   const desc = prod ? prod.nombre + (prod.tamano_nombre?' '+prod.tamano_nombre:'') : 'Producto';
 
   S.cart.push({ producto_id:S.vProdId, descripcion:desc, precio, cantidad:cant, nota });
@@ -115,8 +128,9 @@ function cartClear()     { S.cart=[]; renderCart(); }
 async function ventaConfirmar() {
   if(!S.cart.length){toast('El carrito está vacío',true);return;}
   const nota = document.getElementById('v-nota-venta').value.trim();
+  const fecha = document.getElementById('v-fecha').value || todayStr();
   try {
-    const r = await api('ventas_nueva',{items:S.cart,nota},'POST');
+    const r = await api('ventas_nueva',{items:S.cart,nota,fecha},'POST');
     toast(`✓ Venta ${r.codigo} — ${fmt(r.total)}`);
     S.cart=[]; renderCart();
     document.getElementById('v-nota-venta').value='';
