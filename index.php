@@ -11,7 +11,7 @@ if (isset($_SESSION['user_id'])) {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Perfumes — Acceso</title>
+<title>Asaria Perfumería</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <link rel="apple-touch-icon" href="assets/icon.jpg">

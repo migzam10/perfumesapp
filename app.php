@@ -8,7 +8,7 @@ $rol  = $sess['rol'];
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Perfumería Asaria</title>
+<title>Asaria Perfumería</title>
 
 <!-- PWA y Apple Touch Icon -->
 <link rel="manifest" href="manifest.json">
