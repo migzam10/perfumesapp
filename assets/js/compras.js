@@ -21,7 +21,7 @@ async function loadCompras() {
 
 function renderCompraTipos() {
   const c = document.getElementById('c-tipo-chips');
-  c.innerHTML = S.tipos.filter(t=>t.activo==1).map(t=>
+  c.innerHTML = S.tipos.map(t=>
     `<div class="chip" onclick="cSelectTipo(${t.id},${t.lleva_tamano})">${t.nombre}</div>`
   ).join('');
   document.getElementById('c-prods').innerHTML='';
