@@ -79,7 +79,7 @@ function vSelectProd(id, precio) {
 function cartAdd() {
   if(!S.vProdId) { toast('Selecciona un producto', true); return; }
   const precio = parseInt(document.getElementById('v-precio').value)||0;
-  if(precio<=0)  { toast('Ingresa un precio válido', true); return; }
+  if(precio<0)  { toast('Ingresa un precio válido', true); return; }
   const cant = Math.max(1, parseInt(document.getElementById('v-cant').value)||1);
   
   const prod = S.productos.find(p=>p.id==S.vProdId);
