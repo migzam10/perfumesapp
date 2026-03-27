@@ -17,7 +17,7 @@ $rol  = $sess['rol'];
 <link rel="icon" href="assets/icon.jpg" type="image/x-icon">
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/app.css?v=1.0">
+<link rel="stylesheet" href="assets/css/app.css?v=2.0">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <!-- OneSignal SDK -->
@@ -41,7 +41,7 @@ $rol  = $sess['rol'];
   <div class="hdr-logo" onclick="nav('dashboard')" style="cursor: pointer;" title="Ver Estadísticas">✦ Asaria Perfumería</div>
   <div class="hdr-meta">
     <div class="hdr-user">Hola, <b id="hdr-n"><?= htmlspecialchars($sess['nombre']) ?></b></div>
-    <button class="btn-out" id="theme-toggle" onclick="toggleTheme()" type="button" style="border:none; padding: 5px 3px;">Tema</button>
+    <button class="btn-out" id="theme-toggle" onclick="toggleTheme()" type="button" style="border:none; padding: 5px 3px;"></button>
     <button class="btn-out" onclick="logout()">Salir</button>
   </div>
 </div>
@@ -97,7 +97,7 @@ include 'views/admin.php';
 <script>
 const ROL = '<?= $rol ?>';
 </script>
-<script src="assets/js/app.js"></script>
+<script src="assets/js/app.js?v=1.0"></script>
 <script src="assets/js/venta.js"></script>
 <script src="assets/js/historial.js"></script>
 <script src="assets/js/inventario.js"></script>
