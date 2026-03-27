@@ -63,6 +63,8 @@ $routes = [
     'compras_detalle'       => ['compras_detalle',       'GET'],
     'compras_por_dia'       => ['compras_por_dia',       'GET'],
     'compras_dia_detalle'   => ['compras_dia_detalle',   'GET'],
+    'compras_item_update'   => ['compras_item_update',   'POST'],
+    'compras_item_delete'   => ['compras_item_delete',   'POST'],
     'compras_nueva'         => ['compras_nueva',         'POST'],
 ];
 

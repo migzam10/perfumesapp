@@ -117,7 +117,9 @@ async function verCompraDia(fecha) {
   document.querySelectorAll('.view').forEach(e=>e.classList.remove('on'));
   document.getElementById('view-compra-detalle').classList.add('on');
 
+  S.compraDetalleFecha = fecha;
   const compras = await api(`compras_dia_detalle&fecha=${fecha}`);
+  S.compraDetalleItems = compras;
   const total  = compras.reduce((s,c)=>s+c.total,0);
   const el = document.getElementById('compra-det-list');
   if(!compras.length){el.innerHTML='<div class="empty">Sin compras ese día</div>';return;}
@@ -129,7 +131,37 @@ async function verCompraDia(fecha) {
         <div class="vi-total">${fmt(c.total)}</div>
       </div>
       <div class="vi-items">${c.items.map(i=>`
-          <div class="vi-irow"><span>${i.cantidad>1?i.cantidad+' × ':''} ${i.descripcion} ${i.precio_compra ? `<em style="font-size:.68rem;color:var(--txt2)">(${fmt(i.precio_compra)} c/u)</em>` : ''}</span><span>${i.precio_compra ? fmt(i.precio_compra * i.cantidad) : '—'}</span></div>`).join('')}
+          <div class="vi-irow"><span>${i.cantidad>1?i.cantidad+' × ':''} ${i.descripcion} ${i.precio_compra ? `<em style="font-size:.68rem;color:var(--txt2)">(${fmt(i.precio_compra)} c/u)</em>` : ''}</span><span>${i.precio_compra ? fmt(i.precio_compra * i.cantidad) : '—'}</span></div>
+          <div class="vi-irow" style="gap:8px;margin:4px 0 10px">
+            <button class="bsm bsm-g" onclick="editarCompraItem(${i.id})">Editar</button>
+            <button class="bsm bsm-d" onclick="eliminarCompraItem(${i.id})">Eliminar</button>
+          </div>`).join('')}
       </div>
     </div>`).join('');
+}
+
+async function editarCompraItem(itemId) {
+  const item = S.compraDetalleItems.flatMap(c=>c.items).find(i=>i.id===itemId);
+  if(!item){toast('Ítem no encontrado', true); return;}
+  const cantidadRaw = prompt('Cantidad', item.cantidad);
+  if (cantidadRaw === null) return;
+  const cantidad = Math.max(1, parseInt(cantidadRaw, 10) || 0);
+  if (!cantidad) { toast('Cantidad inválida', true); return; }
+  const precioRaw = prompt('Precio de compra', item.precio_compra === null ? '' : item.precio_compra);
+  if (precioRaw === null) return;
+  const precio = precioRaw.trim() === '' ? null : parseInt(precioRaw, 10);
+  try {
+    await api('compras_item_update', { id: itemId, descripcion: item.descripcion, cantidad, precio_compra: precio }, 'POST');
+    toast('Ítem actualizado');
+    await verCompraDia(S.compraDetalleFecha);
+  } catch (e) {}
+}
+
+async function eliminarCompraItem(itemId) {
+  if (!confirm('¿Eliminar este producto de la compra? Esto ajustará el stock.')) return;
+  try {
+    await api('compras_item_delete', { id: itemId }, 'POST');
+    toast('Ítem eliminado');
+    await verCompraDia(S.compraDetalleFecha);
+  } catch (e) {}
 }

@@ -42,7 +42,7 @@ function renderInvList(prods) {
     <div class="list-row">
       <div>
         <div class="lr-name">${p.nombre}${p.tamano_nombre?' '+p.tamano_nombre:''}</div>
-        <div class="lr-sub">${p.tipo_nombre} · base: ${fmt(p.precio_base)} · mín: ${p.stock_minimo}</div>
+        <div class="lr-sub">${p.tipo_nombre} · Precio Venta: ${fmt(p.precio_base)} · mín: ${p.stock_minimo}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <span class="badge ${p.stock<=p.stock_minimo?'b-lo':'b-ok'}">${p.stock} uds</span>

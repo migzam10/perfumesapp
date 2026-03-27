@@ -1,17 +1,38 @@
 :root {
-  --bg: #0d0b0e;
-  --s1: #1a1520;
-  --s2: #241d2c;
-  --s3: #2f2540;
-  --gold: #c9a96e;
-  --gold2: #e8c99a;
-  --txt: #f0ebe8;
-  --txt2: #a09898;
-  --ok: #6ec9a0;
-  --err: #e07070;
-  --warn: #e0b870;
-  --border: rgba(201, 169, 110, .17);
-  --r: 13px;
+    --bg: #f4eddd;
+    --s1: #f4eddd;
+    --s2: #eae1cd;
+    --s3: #d8c29b;
+    --gold: #b78b3d;
+    --gold3: #d8b264;
+    --gold2: #684f1b;
+    --hdr: #372704;
+    --txt: #2f2110;
+    --txt2: #372d22;
+    --ok: #389c5e;
+    --err: #ef2507;
+    --warn: #775e2d;
+    --border: rgba(119, 81, 39, .18);
+    --r: 13px;
+}
+
+body.theme-dark,
+body.theme-dark * {
+    --bg: #0d0b0e;
+    --s1: #1a1520;
+    --s2: #241d2c;
+    --s3: #2f2540;
+    --gold: #c9a96e;
+    --gold3: #e8c99a;
+    --gold2: #f0ebe8;
+    --hdr: #1a1520;
+    --txt: #f0ebe8;
+    --txt2: #a09898;
+    --ok: #6ec9a0;
+    --err: #e07070;
+    --warn: #e0b870;
+    --border: rgba(201, 169, 110, .17);
+    --r: 13px;
 }
 
 * {
@@ -38,7 +59,7 @@ body {
 
 /* ── Header ─────────────────────────────────────────── */
 .hdr {
-  background: linear-gradient(135deg, #1a1520, #2a1f35);
+  background: var(--hdr);
   padding: 13px 16px 11px;
   border-bottom: 1px solid var(--border);
   position: sticky;
@@ -51,8 +72,8 @@ body {
 
 .hdr-logo {
   font-family: 'Playfair Display', serif;
-  font-size: 1.25rem;
-  color: var(--gold2);
+  font-size: 1.2rem;
+  color: var(--gold3);
 }
 
 .hdr-meta {
@@ -62,8 +83,8 @@ body {
 }
 
 .hdr-user {
-  font-size: .78rem;
-  color: var(--txt2);
+  font-size: .7rem;
+  color: #eb7f09;
 }
 
 .hdr-user b {
@@ -72,9 +93,9 @@ body {
 
 .btn-out {
   background: none;
-  border: 1px solid var(--border);
-  color: var(--txt2);
-  padding: 3px 9px;
+  border: 1px solid  rgba(255, 135, 1, .35);
+  color: #eb7f09;
+  padding: 5px 8px;
   border-radius: 20px;
   font-size: .72rem;
   cursor: pointer;
@@ -84,7 +105,7 @@ body {
 /* ── Nav ─────────────────────────────────────────────── */
 .nav {
   display: flex;
-  background: var(--s1);
+  background: var(--s2);
   border-top: 1px solid var(--border);
   position: fixed;
   bottom: 0;

@@ -41,6 +41,7 @@ $rol  = $sess['rol'];
   <div class="hdr-logo" onclick="nav('dashboard')" style="cursor: pointer;" title="Ver Estadísticas">✦ Asaria Perfumería</div>
   <div class="hdr-meta">
     <div class="hdr-user">Hola, <b id="hdr-n"><?= htmlspecialchars($sess['nombre']) ?></b></div>
+    <button class="btn-out" id="theme-toggle" onclick="toggleTheme()" type="button" style="border:none; padding: 5px 3px;">Tema</button>
     <button class="btn-out" onclick="logout()">Salir</button>
   </div>
 </div>

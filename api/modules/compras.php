@@ -67,7 +67,108 @@ function compras_dia_detalle(): void {
         $s->execute([$comp['id']]);
         $comp['items'] = $s->fetchAll();
     }
-    jsonOk($lista);
+    $lista = array_filter($lista, fn($comp) => count($comp['items']) > 0);
+    jsonOk(array_values($lista));
+}
+
+function update_compra_total(int $compra_id): void {
+    $db = db();
+    $sum = $db->prepare("SELECT SUM(cantidad * precio_compra) AS total FROM compra_items WHERE compra_id = ?");
+    $sum->execute([$compra_id]);
+    $total = $sum->fetchColumn();
+    $total = $total === null ? 0 : (int)$total;
+    $db->prepare("UPDATE compras SET total = ? WHERE id = ?")->execute([$total, $compra_id]);
+}
+
+function compras_item_update(): void {
+    requireAuth();
+    $d = requestBody();
+
+    $item_id = (int)($d['id'] ?? 0);
+    if (!$item_id) jsonError('ID de ítem requerido');
+
+    $descripcion = trim($d['descripcion'] ?? '');
+    $cantidad = max(1, (int)($d['cantidad'] ?? 0));
+    if (!$descripcion) jsonError('Descripción requerida');
+    if (!$cantidad) jsonError('Cantidad inválida');
+
+    $precio_compra = isset($d['precio_compra']) && $d['precio_compra'] !== '' ? (int)$d['precio_compra'] : null;
+
+    $db = db();
+    $item = $db->prepare("SELECT * FROM compra_items WHERE id = ?");
+    $item->execute([$item_id]);
+    $item = $item->fetch();
+    if (!$item) jsonError('Ítem no encontrado', 404);
+
+    $delta = $cantidad - $item['cantidad'];
+    if ($delta !== 0) {
+        $prod = $db->prepare("SELECT stock FROM productos WHERE id = ?");
+        $prod->execute([$item['producto_id']]);
+        $prod = $prod->fetch();
+        if (!$prod) jsonError('Producto no encontrado', 404);
+        if ($delta < 0 && $prod['stock'] < abs($delta)) {
+            jsonError('No hay suficiente stock para reducir la cantidad', 400);
+        }
+    }
+
+    $db->beginTransaction();
+    try {
+        if ($delta !== 0) {
+            $db->prepare("UPDATE productos SET stock = stock + ? WHERE id = ?")->execute([$delta, $item['producto_id']]);
+        }
+
+        $db->prepare("UPDATE compra_items SET descripcion = ?, cantidad = ?, precio_compra = ? WHERE id = ?")
+            ->execute([$descripcion, $cantidad, $precio_compra, $item_id]);
+
+        update_compra_total((int)$item['compra_id']);
+        $db->commit();
+        jsonOk(['ok' => true]);
+    } catch (Exception $e) {
+        $db->rollBack();
+        jsonError('Error al actualizar el ítem', 500);
+    }
+}
+
+function compras_item_delete(): void {
+    requireAuth();
+    $d = requestBody();
+
+    $item_id = (int)($d['id'] ?? 0);
+    if (!$item_id) jsonError('ID de ítem requerido');
+
+    $db = db();
+    $item = $db->prepare("SELECT * FROM compra_items WHERE id = ?");
+    $item->execute([$item_id]);
+    $item = $item->fetch();
+    if (!$item) jsonError('Ítem no encontrado', 404);
+
+    $prod = $db->prepare("SELECT stock FROM productos WHERE id = ?");
+    $prod->execute([$item['producto_id']]);
+    $prod = $prod->fetch();
+    if (!$prod) jsonError('Producto no encontrado', 404);
+    if ($prod['stock'] < $item['cantidad']) {
+        jsonError('No hay suficiente stock para eliminar este ítem', 400);
+    }
+
+    $db->beginTransaction();
+    try {
+        $db->prepare("UPDATE productos SET stock = stock - ? WHERE id = ?")->execute([$item['cantidad'], $item['producto_id']]);
+        $db->prepare("DELETE FROM compra_items WHERE id = ?")->execute([$item_id]);
+
+        $count = $db->prepare("SELECT COUNT(*) FROM compra_items WHERE compra_id = ?");
+        $count->execute([$item['compra_id']]);
+        if ((int)$count->fetchColumn() === 0) {
+            $db->prepare("DELETE FROM compras WHERE id = ?")->execute([$item['compra_id']]);
+        } else {
+            update_compra_total((int)$item['compra_id']);
+        }
+
+        $db->commit();
+        jsonOk(['ok' => true]);
+    } catch (Exception $e) {
+        $db->rollBack();
+        jsonError('Error al eliminar el ítem', 500);
+    }
 }
 
 // Registrar compra masiva

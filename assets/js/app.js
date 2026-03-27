@@ -14,10 +14,36 @@ const S = {
   cart: [],
   // compra
   cCart: [],
+  compraDetalleFecha: null,
+  compraDetalleItems: [],
   // admin
   adminTipoFiltro: 'all',
   invFiltro: 'all',
 };
+
+const THEME_KEY = 'app-theme';
+const DEFAULT_THEME = 'theme-beige';
+
+function applyTheme(theme) {
+  document.body.classList.remove('theme-beige', 'theme-dark');
+  document.body.classList.add(theme);
+  localStorage.setItem(THEME_KEY, theme);
+  const btn = document.getElementById('theme-toggle');
+  if (btn) {
+    btn.textContent = theme === 'theme-dark' ? '🌙' : '☀️';
+    btn.title = theme === 'theme-dark' ? 'Tema oscuro' : 'Tema claro';
+  }
+}
+
+function toggleTheme() {
+  const next = document.body.classList.contains('theme-dark') ? 'theme-beige' : 'theme-dark';
+  applyTheme(next);
+}
+
+function initTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  applyTheme(saved === 'theme-dark' ? 'theme-dark' : DEFAULT_THEME);
+}
 
 // ============================================================
 // API
@@ -54,6 +80,7 @@ function nav(v) {
 // INIT
 // ============================================================
 async function init() {
+  initTheme();
   await Promise.all([loadTipos(), loadTamanos(), loadProductosCatalogo()]);
   renderVentaTipos();
   initCompraFecha();
