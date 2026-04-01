@@ -39,11 +39,29 @@ function tipos_toggle(): void {
     jsonOk();
 }
 
+function tipos_delete(): void {
+    requireAdmin();
+    $d = requestBody();
+    $id = (int)($d['id'] ?? 0);
+    if (!$id) jsonError('ID requerido');
+
+    $db = db();
+    // Validación de seguridad: No eliminar si hay productos vinculados
+    $stmt = $db->prepare("SELECT COUNT(*) FROM productos WHERE tipo_id = ?");
+    $stmt->execute([$id]);
+    if ($stmt->fetchColumn() > 0) {
+        jsonError('No se puede eliminar: existen productos asociados a este tipo');
+    }
+
+    $db->prepare("DELETE FROM tipos WHERE id = ?")->execute([$id]);
+    jsonOk();
+}
+
 // ── Tamaños ──────────────────────────────────────────────────
 
 function tamanos_list(): void {
     requireAuth();
-    $rows = db()->query("SELECT * FROM tamanos WHERE activo=1 ORDER BY orden, nombre")->fetchAll();
+    $rows = db()->query("SELECT * FROM tamanos ORDER BY orden, nombre")->fetchAll();
     jsonOk($rows);
 }
 

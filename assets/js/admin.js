@@ -16,12 +16,13 @@ async function loadAdmin() {
 function renderAdminTipos() {
   document.getElementById('admin-tipos-list').innerHTML = S.tipos.map(t=>`
     <div class="list-row">
-      <div><div class="lr-name">${t.nombre}</div>
+      <div><div class="lr-name">${t.nombre} <span class="badge ${t.activo?'b-ok':'b-of'}">${t.activo?'Activo':'Inactivo'}</span></div>
         <div class="lr-sub">${t.lleva_tamano?'Con tamaño':'Sin tamaño'}</div></div>
       <div class="lr-right">
-        <span class="badge ${t.activo?'b-ok':'b-of'}">${t.activo?'Activo':'Inactivo'}</span>
+        
         <button class="bsm bsm-g" onclick="editTipo(${t.id})">Editar</button>
-        <button class="bsm ${t.activo?'bsm-d':'bsm-p'}" onclick="toggleTipo(${t.id})">${t.activo?'Desactivar':'Activar'}</button>
+        <button class="bsm ${t.activo?'bsm-d':'bsm-p'}" onclick="toggleTipo(${t.id})">${t.activo?'Des.':'Act.'}</button>
+        <button class="bsm bsm-d" onclick="deleteTipo(${t.id})">Eliminar</button>
       </div>
     </div>`).join('') || '<div class="empty">Sin tipos</div>';
 }
@@ -29,9 +30,9 @@ function renderAdminTipos() {
 function renderAdminTams() {
   document.getElementById('admin-tams-list').innerHTML = S.tamanos.map(t=>`
     <div class="list-row">
-      <div><div class="lr-name">${t.nombre}</div><div class="lr-sub">Orden: ${t.orden}</div></div>
+      <div><div class="lr-name">${t.nombre} <span class="badge ${t.activo?'b-ok':'b-of'}">${t.activo?'Activo':'Inactivo'}</span></div><div class="lr-sub">Orden: ${t.orden}</div></div>
       <div class="lr-right">
-        <span class="badge ${t.activo?'b-ok':'b-of'}">${t.activo?'Activo':'Inactivo'}</span>
+        
         <button class="bsm bsm-g" onclick="editTam(${t.id})">Editar</button>
         <button class="bsm ${t.activo?'bsm-d':'bsm-p'}" onclick="toggleTam(${t.id})">${t.activo?'Des.':'Act.'}</button>
       </div>
@@ -53,31 +54,47 @@ function adminProdFilter(f) {
 }
 
 function renderAdminProds(prods) {
-  const list = S.adminTipoFiltro==='all' ? prods : prods.filter(p=>p.tipo_id==S.adminTipoFiltro);
-  document.getElementById('admin-prods-list').innerHTML = list.map(p=>`
+  const list = S.adminTipoFiltro === 'all' ? prods : prods.filter(p => p.tipo_id == S.adminTipoFiltro);
+  
+  const html = list.map(p => {
+    const fullName = `${p.nombre}${p.tamano_nombre ? ' ' + p.tamano_nombre : ''}`;
+    const statusClass = p.activo ? 'b-ok' : 'b-of';
+    const statusText = p.activo ? 'Activo' : 'Inactivo';
+    const toggleClass = p.activo ? 'bsm-d' : 'bsm-p';
+    const toggleText = p.activo ? 'Desc.' : 'Act.';
+
+    return `
     <div class="list-row">
-      <div>
-        <div class="lr-name">${p.nombre}${p.tamano_nombre?' '+p.tamano_nombre:''}</div>
-        <div class="lr-sub">${p.tipo_nombre} · ${fmt(p.precio_base)} · stock: <b>${p.stock}</b></div>
-      </div>
-      <div class="lr-right" style="flex-wrap:wrap;justify-content:flex-end;gap:4px">
-        <span class="badge ${p.activo?'b-ok':'b-of'}">${p.activo?'Activo':'Inactivo'}</span>
-        <button class="bsm bsm-g" onclick="editProd(${p.id})">Editar</button>
-        <button class="bsm bsm-p" onclick="openAddStock(${p.id},'${esc(p.nombre+(p.tamano_nombre?' '+p.tamano_nombre:''))}',${p.stock})">+ Inventario</button>
-        <button class="bsm ${p.activo?'bsm-d':'bsm-p'}" onclick="toggleProd(${p.id})">${p.activo?'Inactivar':'Activar'}</button>
-      </div>
-    </div>`).join('') || '<div class="empty">Sin productos</div>';
+  <div class="lr-content">
+    <div class="lr-title-line">
+      <span class="lr-name">${fullName}</span>
+      <span class="badge ${statusClass}">${statusText}</span>
+    </div>
+    <div class="lr-sub">
+      ${p.tipo_nombre} • Venta: <b>${fmt(p.precio_base)}</b> • Costo: <b>${fmt(p.costo_promedio || 0)}</b> • Stock: <b>${p.stock}</b>
+    </div>
+  </div>
+  
+  <div class="lr-actions-container">
+    <button class="bsm bsm-g" onclick="editProd(${p.id})">Editar</button>
+    <button class="bsm bsm-p" onclick="openAddStock(${p.id}, '${esc(fullName)}', ${p.stock})">+ Invent.</button>
+    <button class="bsm ${toggleClass}" onclick="toggleProd(${p.id})">${toggleText}</button>
+    <button class="bsm bsm-d" onclick="deleteProd(${p.id})">Eliminar</button>
+  </div>
+</div>`;
+  }).join('') || '<div class="empty">Sin productos</div>';
+
+  document.getElementById('admin-prods-list').innerHTML = html;
 }
 
 function renderAdminUsers(users) {
   document.getElementById('admin-users-list').innerHTML = users.map(u=>`
     <div class="list-row">
-      <div><div class="lr-name">${u.nombre}</div>
+      <div><div class="lr-name">${u.nombre} <span class="badge ${u.activo?'b-ok':'b-of'}">${u.activo?'Activo':'Inactivo'}</span></div>
         <div class="lr-sub"><span class="badge ${u.rol==='admin'?'b-au':'b-ok'}">${u.rol}</span> · ${u.usuario}</div></div>
       <div class="lr-right">
-        <span class="badge ${u.activo?'b-ok':'b-of'}">${u.activo?'Activo':'Inactivo'}</span>
         <button class="bsm bsm-g" onclick="editUser(${u.id})">Editar</button>
-        ${u.usuario!=='admin'?`<button class="bsm ${u.activo?'bsm-d':'bsm-p'}" onclick="toggleUser(${u.id})">${u.activo?'Des.':'Act.'}</button>`:''}
+        ${u.usuario!=='admin'?`<button class="bsm ${u.activo?'bsm-d':'bsm-p'}" onclick="toggleUser(${u.id})">${u.activo?'Desactivar':'Activar'}</button>`:''}
       </div>
     </div>`).join('');
 }
@@ -105,7 +122,21 @@ async function saveTipo() {
 
 async function toggleTipo(id) {
   await api('tipos_toggle',{id},'POST');
-  await loadTipos(); renderAdminTipos();
+  await loadTipos(); renderAdminTipos(); renderVentaTipos();
+}
+
+async function deleteTipo(id) {
+  const hasProds = S._adminProds.some(p => p.tipo_id == id);
+  if (hasProds) {
+    toast('No se puede eliminar: existen productos asociados a este tipo', true);
+    return;
+  }
+  if (!confirm('¿Estás seguro de eliminar este tipo permanentemente? Esta acción no se puede deshacer.')) return;
+  try {
+    await api('tipos_delete', {id}, 'POST');
+    toast('✓ Tipo eliminado de la base de datos');
+    await loadTipos(); renderAdminTipos(); renderVentaTipos();
+  } catch (e) {}
 }
 
 // ── CRUD Tamaños ──────────────────────────────────────────
@@ -185,14 +216,33 @@ async function saveProd() {
   await api('productos_save',d,'POST');
   toast('✓ Guardado'); closeModal('m-prod');
   const prods=await api('productos'); S._adminProds=prods;
-  renderAdminProdFilter(prods); renderAdminProds(prods);
-  await loadProductosCatalogo();
+  renderAdminProdFilter(prods); renderAdminProds(prods); 
+  await loadProductosCatalogo(); renderVentaTipos();
 }
 
 async function toggleProd(id) {
   await api('productos_toggle',{id},'POST');
   const prods=await api('productos'); S._adminProds=prods;
-  renderAdminProds(prods); loadProductosCatalogo();
+  renderAdminProds(prods); await loadProductosCatalogo(); renderVentaTipos();
+}
+
+async function deleteProd(id) {
+  const p = S._adminProds.find(x => x.id == id);
+  if (!p) return;
+
+  if (p.stock > 0) {
+    toast(`No se puede eliminar: stock actual es ${p.stock}`, true);
+    return;
+  }
+
+  if (!confirm(`¿Estás seguro de eliminar permanentemente "${p.nombre}"?`)) return;
+
+  try {
+    await api('productos_delete', { id }, 'POST');
+    toast('✓ Producto eliminado');
+    const prods = await api('productos'); S._adminProds = prods;
+    renderAdminProds(prods); await loadProductosCatalogo(); renderVentaTipos();
+  } catch (e) {}
 }
 
 // ── Añadir stock ──────────────────────────────────────────

@@ -33,12 +33,15 @@ $routes = [
     'tamanos'               => ['tamanos_list',          'GET'],
     'tamanos_save'          => ['tamanos_save',          'POST'],
     'tamanos_toggle'        => ['tamanos_toggle',        'POST'],
+    'tipos_delete'          => ['tipos_delete',          'POST'],
+
 
     // Productos
     'productos'             => ['productos_list',        'GET'],
     'productos_venta'       => ['productos_para_venta',  'GET'],
     'productos_save'        => ['productos_save',        'POST'],
     'productos_toggle'      => ['productos_toggle',      'POST'],
+    'productos_delete'      => ['productos_delete',      'POST'],
     'productos_add_stock'   => ['productos_add_stock',   'POST'],
     'alertas_stock'         => ['alertas_stock',         'GET'],
 

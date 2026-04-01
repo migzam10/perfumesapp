@@ -507,11 +507,28 @@ textarea {
   align-items: flex-start;
   justify-content: space-between;
   padding: 9px 0;
+  gap: 12px;
+  flex-direction: column;
   border-bottom: 1px solid rgba(201, 169, 110, .07);
 }
 
 .list-row:last-child {
   border-bottom: none;
+}
+
+.lr-title-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.lr-actions-container {
+  display: flex;
+  flex-wrap: wrap;         /* Si no caben, bajan a la siguiente línea */
+  justify-content: flex-start; /* Siempre alineados a la izquierda */
+  gap: 8px;                /* Espacio horizontal Y vertical entre botones */
+  width: 100%;
 }
 
 .lr-name {
@@ -859,4 +876,14 @@ textarea {
     .dashboard-grid {
         grid-template-columns: 2fr 1fr !important;
     }
+
+    .list-row {
+    flex-direction: row;   /* En PC el texto a la izquierda y botones a la derecha */
+    justify-content: space-between;
+    align-items: center;
+  }
+  .lr-actions-container {
+    width: auto;
+    justify-content: flex-end; /* En PC se ve más ordenado al final de la fila */
+  }
 }

@@ -8,7 +8,10 @@ function productos_list(): void {
     $tipo_id = $_GET['tipo_id'] ?? null;
     $activo  = $_GET['activo']  ?? null;  // '1', '0', null = todos
 
-    $sql    = "SELECT p.*, t.nombre AS tipo_nombre, t.lleva_tamano, s.nombre AS tamano_nombre
+    $sql    = "SELECT p.*, t.nombre AS tipo_nombre, t.lleva_tamano, s.nombre AS tamano_nombre,
+               (SELECT SUM(ci.cantidad * ci.precio_compra) / NULLIF(SUM(ci.cantidad), 0) 
+                FROM compra_items ci 
+                WHERE ci.producto_id = p.id AND ci.precio_compra > 0) AS costo_promedio
                FROM productos p
                JOIN tipos t ON p.tipo_id = t.id
                LEFT JOIN tamanos s ON p.tamano_id = s.id
@@ -33,7 +36,7 @@ function productos_para_venta(): void {
          FROM productos p
          JOIN tipos t ON p.tipo_id = t.id AND t.activo = 1
          LEFT JOIN tamanos s ON p.tamano_id = s.id
-         WHERE p.activo = 1 AND p.stock > 0
+         WHERE p.activo = 1 AND p.stock > 0 AND (p.tamano_id IS NULL OR s.activo = 1)
          ORDER BY t.nombre, s.orden, p.nombre"
     );
     jsonOk($stmt->fetchAll());
@@ -97,6 +100,34 @@ function productos_toggle(): void {
     requireAdmin();
     $d = requestBody();
     db()->prepare("UPDATE productos SET activo = 1 - activo WHERE id=?")->execute([$d['id']]);
+    jsonOk();
+}
+
+function productos_delete(): void {
+    requireAdmin();
+    $d = requestBody();
+    $id = (int)($d['id'] ?? 0);
+    if (!$id) jsonError('ID requerido');
+
+    $db = db();
+    // 1. Validar stock
+    $p = $db->prepare("SELECT nombre, stock FROM productos WHERE id = ?");
+    $p->execute([$id]);
+    $prod = $p->fetch();
+    if (!$prod) jsonError('Producto no encontrado');
+
+    if ($prod['stock'] > 0) {
+        jsonError("No se puede eliminar '{$prod['nombre']}': el stock actual es {$prod['stock']}. Debe estar en 0.");
+    }
+
+    // 2. Opcional: Validar si tiene historial de ventas para evitar errores de integridad
+    $hasSales = $db->prepare("SELECT COUNT(*) FROM venta_items WHERE producto_id = ?");
+    $hasSales->execute([$id]);
+    if ($hasSales->fetchColumn() > 0) {
+        jsonError("No se puede eliminar: el producto tiene historial de ventas. Se recomienda inactivarlo.");
+    }
+
+    $db->prepare("DELETE FROM productos WHERE id = ?")->execute([$id]);
     jsonOk();
 }
 
