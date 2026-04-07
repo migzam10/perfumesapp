@@ -197,7 +197,7 @@ function editProd(id) {
   document.getElementById('mp-minimo').value=p.stock_minimo;
   document.getElementById('mp-unidad').value=p.unidad || 'uds';
   document.getElementById('mp-stock-ro').style.display='block';
-  document.getElementById('mp-stock-val').value=p.stock+' unidades';
+  document.getElementById('mp-stock-val').value=p.stock+ ' ' + (p.unidad || 'uds');
   const sel=document.getElementById('mp-tipo');
   sel.innerHTML=S.tipos.filter(t=>t.activo||t.id==p.tipo_id).map(t=>`<option value="${t.id}" data-tamano="${t.lleva_tamano}" ${t.id==p.tipo_id?'selected':''}>${t.nombre}</option>`).join('');
   mpTipoChange();
