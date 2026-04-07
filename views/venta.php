@@ -9,6 +9,12 @@
     <div class="sec">Tipo de producto</div>
     <div class="chips" id="v-tipo-chips"></div>
 
+<!-- Buscador de productos -->
+<div class="search-box">
+  <input type="text" id="venta-search" placeholder="Buscar producto por nombre..." oninput="filterVentaProds()">
+</div>
+
+
     <!-- Productos con tamaño -->
     <div id="v-sec-tamano" style="display:none">
       <div class="sec">Tamaño</div>

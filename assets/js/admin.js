@@ -6,6 +6,7 @@ async function loadAdmin() {
   await Promise.all([loadTipos(), loadTamanos()]);
   const [prods, users] = await Promise.all([api('productos'), api('usuarios')]);
   S._adminProds = prods; S._adminUsers = users;
+  if (document.getElementById('admin-search')) document.getElementById('admin-search').value = '';
   renderAdminTipos();
   renderAdminTams();
   renderAdminProdFilter(prods);
@@ -53,9 +54,20 @@ function adminProdFilter(f) {
   renderAdminProds(S._adminProds||[]);
 }
 
+function adminSearch() {
+  renderAdminProds(S._adminProds || []);
+}
+
 function renderAdminProds(prods) {
-  const list = S.adminTipoFiltro === 'all' ? prods : prods.filter(p => p.tipo_id == S.adminTipoFiltro);
+  let list = S.adminTipoFiltro === 'all' ? prods : prods.filter(p => p.tipo_id == S.adminTipoFiltro);
   
+  const q = (document.getElementById('admin-search')?.value || '').toLowerCase().trim();
+  if (q) {
+    list = list.filter(p => 
+      `${p.nombre} ${p.tamano_nombre || ''} ${p.tipo_nombre}`.toLowerCase().includes(q)
+    );
+  }
+
   const html = list.map(p => {
     const fullName = `${p.nombre}${p.tamano_nombre ? ' ' + p.tamano_nombre : ''}`;
     const statusClass = p.activo ? 'b-ok' : 'b-of';

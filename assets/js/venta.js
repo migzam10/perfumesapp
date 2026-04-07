@@ -54,7 +54,7 @@ function renderVentaProdsConTamano() {
     <div class="pcard ${S.vProdId==p.id?'on':''}" onclick="vSelectProd(${p.id},${p.precio_base})">
       <div class="pn">${p.nombre}${p.tamano_nombre?' '+p.tamano_nombre:''}</div>
       <div class="pp">${fmt(p.precio_base)}</div>
-      <div class="ps ${p.stock<=p.stock_minimo?'lo':''}">${p.stock} uds${p.stock<=p.stock_minimo?' ⚠':''}</div>
+      <div class="ps ${p.stock<=p.stock_minimo?'lo':''}">${p.stock} ${p.unidad || 'uds'}${p.stock<=p.stock_minimo?' ⚠':''}</div>
     </div>`).join('') || '<div class="empty">Sin productos disponibles</div>';
 }
 
@@ -65,7 +65,7 @@ function renderVentaProdsSinTamano() {
     <div class="pcard ${S.vProdId==p.id?'on':''}" onclick="vSelectProd(${p.id},${p.precio_base})">
       <div class="pn">${p.nombre}</div>
       <div class="pp">${fmt(p.precio_base)}</div>
-      <div class="ps ${p.stock<=p.stock_minimo?'lo':''}">${p.stock} uds${p.stock<=p.stock_minimo?' ⚠':''}</div>
+      <div class="ps ${p.stock<=p.stock_minimo?'lo':''}">${p.stock} ${p.unidad || 'uds'}${p.stock<=p.stock_minimo?' ⚠':''}</div>
     </div>`).join('') || '<div class="empty">Sin productos disponibles</div>';
 }
 
@@ -157,4 +157,25 @@ async function ventaConfirmar() {
     }
   }
 
+}
+
+/**
+ * Filtra los productos visibles en la pantalla de venta
+ */
+function filterVentaProds() {
+  const query = document.getElementById('venta-search').value.toLowerCase().trim();
+  // Seleccionamos todas las tarjetas de productos (asumiendo que usan la clase .pcard)
+  const products = document.querySelectorAll('.view.on .pcard');
+
+  products.forEach(card => {
+    // Obtenemos el nombre del producto (clase .pn según tu CSS)
+    const name = card.querySelector('.pn').textContent.toLowerCase();
+    
+    // Si el nombre incluye lo que el usuario escribió, lo mostramos
+    if (name.includes(query)) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
 }
