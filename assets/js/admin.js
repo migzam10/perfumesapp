@@ -71,13 +71,13 @@ function renderAdminProds(prods) {
       <span class="badge ${statusClass}">${statusText}</span>
     </div>
     <div class="lr-sub">
-      ${p.tipo_nombre} • Venta: <b>${fmt(p.precio_base)}</b> • Costo: <b>${fmt(p.costo_promedio || 0)}</b> • Stock: <b>${p.stock}</b>
+      ${p.tipo_nombre} • Venta: <b>${fmt(p.precio_base)}</b> • Costo: <b>${fmt(p.costo_promedio || 0)}</b> • Stock: <b>${p.stock} ${p.unidad || 'uds'}</b>
     </div>
   </div>
   
   <div class="lr-actions-container">
     <button class="bsm bsm-g" onclick="editProd(${p.id})">Editar</button>
-    <button class="bsm bsm-p" onclick="openAddStock(${p.id}, '${esc(fullName)}', ${p.stock})">+ Invent.</button>
+    <button class="bsm bsm-p" onclick="openAddStock(${p.id}, '${esc(fullName)}', ${p.stock}, '${p.unidad || 'uds'}')">+ Invent.</button>
     <button class="bsm ${toggleClass}" onclick="toggleProd(${p.id})">${toggleText}</button>
     <button class="bsm bsm-d" onclick="deleteProd(${p.id})">Eliminar</button>
   </div>
@@ -169,6 +169,7 @@ function openProdModal() {
   document.getElementById('mp-nombre').value='';
   document.getElementById('mp-precio').value='';
   document.getElementById('mp-minimo').value='5';
+  document.getElementById('mp-unidad').value='uds';
   document.getElementById('mp-stock-ro').style.display='none';
   const sel=document.getElementById('mp-tipo');
   sel.innerHTML=S.tipos.filter(t=>t.activo).map(t=>`<option value="${t.id}" data-tamano="${t.lleva_tamano}">${t.nombre}</option>`).join('');
@@ -194,6 +195,7 @@ function editProd(id) {
   document.getElementById('mp-nombre').value=p.nombre;
   document.getElementById('mp-precio').value=p.precio_base;
   document.getElementById('mp-minimo').value=p.stock_minimo;
+  document.getElementById('mp-unidad').value=p.unidad || 'uds';
   document.getElementById('mp-stock-ro').style.display='block';
   document.getElementById('mp-stock-val').value=p.stock+' unidades';
   const sel=document.getElementById('mp-tipo');
@@ -211,6 +213,7 @@ async function saveProd() {
     tamano_id:document.getElementById('mp-tam-grp').style.display!=='none'?document.getElementById('mp-tamano').value:null,
     precio_base:parseInt(document.getElementById('mp-precio').value)||0,
     stock_minimo:parseInt(document.getElementById('mp-minimo').value)||5,
+    unidad:document.getElementById('mp-unidad').value
   };
   if(!d.nombre){toast('Ingresa un nombre',true);return;}
   await api('productos_save',d,'POST');
@@ -246,10 +249,10 @@ async function deleteProd(id) {
 }
 
 // ── Añadir stock ──────────────────────────────────────────
-function openAddStock(id, nombre, stock) {
+function openAddStock(id, nombre, stock, unidad) {
   document.getElementById('mas-id').value=id;
   document.getElementById('mas-prod-name').textContent=nombre;
-  document.getElementById('mas-stock').textContent=stock+' unidades';
+  document.getElementById('mas-stock').textContent=stock + ' ' + unidad;
   document.getElementById('mas-cant').value='';
   document.getElementById('mas-precio').value='';
   document.getElementById('mas-precio-unit').value='';
@@ -293,7 +296,8 @@ async function saveAddStock() {
   };
   if(d.cantidad<=0){toast('Ingresa una cantidad',true);return;}
   const r=await api('productos_add_stock',d,'POST');
-  document.getElementById('mas-stock').textContent=r.stock+' unidades';
+  const p = S._adminProds.find(x => x.id == d.id);
+  document.getElementById('mas-stock').textContent=r.stock + ' ' + (p?.unidad || 'uds');
   toast('✓ Stock actualizado'); closeModal('m-addstock');
   const prods=await api('productos'); S._adminProds=prods;
   renderAdminProds(prods); loadProductosCatalogo(); checkAlertas();

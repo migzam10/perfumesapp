@@ -12,7 +12,7 @@ async function loadInventario() {
     document.getElementById('alerta-list').innerHTML = alertas.map(p=>`
       <div class="list-row">
         <div><div class="lr-name">${p.nombre}${p.tamano_nombre?' '+p.tamano_nombre:''}</div>
-          <div class="lr-sub">${p.tipo_nombre} · ${p.stock} uds</div></div>
+          <div class="lr-sub">${p.tipo_nombre} · ${p.stock} ${p.unidad || 'uds'}</div></div>
         <span class="badge b-lo">Stock bajo</span>
       </div>`).join('');
   } else ac.style.display='none';
@@ -46,7 +46,7 @@ function renderInvList(prods) {
         <div class="lr-sub">Mínimo stock: ${p.stock_minimo}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
-        <span class="badge ${p.stock<=p.stock_minimo?'b-lo':'b-ok'}">${p.stock} uds</span>
+        <span class="badge ${p.stock<=p.stock_minimo?'b-lo':'b-ok'}">${p.stock} ${p.unidad || 'uds'}</span>
         <span class="badge ${p.activo?'b-au':'b-of'}">${p.activo?'Activo':'Inactivo'}</span>
       </div>
     </div>`).join('') || '<div class="empty">Sin productos</div>';

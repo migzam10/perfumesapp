@@ -51,6 +51,7 @@ function productos_save(): void {
     $tamano_id  = !empty($d['tamano_id']) ? (int)$d['tamano_id'] : null;
     $precio     = (int)($d['precio_base'] ?? 0);
     $minimo     = (int)($d['stock_minimo'] ?? 5);
+    $unidad     = trim($d['unidad'] ?? 'uds');
 
     if (!$tipo_id || !$nombre) jsonError('Tipo y nombre son obligatorios');
 
@@ -84,14 +85,14 @@ function productos_save(): void {
 
     if (!$editId) {
         $db->prepare(
-            "INSERT INTO productos (tipo_id, nombre, tamano_id, precio_base, stock_minimo, stock) VALUES (?,?,?,?,?,0)"
-        )->execute([$tipo_id, $nombre, $tamano_id, $precio, $minimo]);
+            "INSERT INTO productos (tipo_id, nombre, tamano_id, precio_base, stock_minimo, unidad, stock) VALUES (?,?,?,?,?,?,0)"
+        )->execute([$tipo_id, $nombre, $tamano_id, $precio, $minimo, $unidad]);
         jsonOk(['ok' => true, 'id' => $db->lastInsertId()]);
     } else {
         // Al editar no se toca el stock
         $db->prepare(
-            "UPDATE productos SET tipo_id=?, nombre=?, tamano_id=?, precio_base=?, stock_minimo=? WHERE id=?"
-        )->execute([$tipo_id, $nombre, $tamano_id, $precio, $minimo, $editId]);
+            "UPDATE productos SET tipo_id=?, nombre=?, tamano_id=?, precio_base=?, stock_minimo=?, unidad=? WHERE id=?"
+        )->execute([$tipo_id, $nombre, $tamano_id, $precio, $minimo, $unidad, $editId]);
         jsonOk();
     }
 }
@@ -180,7 +181,7 @@ function productos_add_stock(): void {
 function alertas_stock(): void {
     requireAuth();
     $rows = db()->query(
-        "SELECT p.id, p.nombre, p.stock, p.stock_minimo, t.nombre AS tipo_nombre, s.nombre AS tamano_nombre
+        "SELECT p.id, p.nombre, p.stock, p.stock_minimo, p.unidad, t.nombre AS tipo_nombre, s.nombre AS tamano_nombre
          FROM productos p
          JOIN tipos t ON p.tipo_id = t.id
          LEFT JOIN tamanos s ON p.tamano_id = s.id

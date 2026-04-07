@@ -39,6 +39,10 @@
       <div class="grp"><label>Precio base ($)</label><input type="number" id="mp-precio" placeholder="0"></div>
       <div class="grp"><label>Stock mínimo</label><input type="number" id="mp-minimo" value="5"></div>
     </div>
+    <div class="grp mb9">
+      <label>Unidad de medida</label>
+      <input type="text" id="mp-unidad" placeholder="Ej: uds, ml, gr">
+    </div>
     <!-- Stock actual: solo lectura en edición -->
     <div class="grp mb9" id="mp-stock-ro" style="display:none">
       <label>Stock actual</label>

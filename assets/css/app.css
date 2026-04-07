@@ -688,6 +688,14 @@ textarea {
   color: var(--warn);
 }
 
+.b-unit {
+  background: var(--s2);
+  color: var(--gold);
+  font-size: 0.65rem;
+  padding: 1px 4px;
+  border: 1px solid var(--border);
+}
+
 /* ── Modal ───────────────────────────────────────────── */
 .ov {
   position: fixed;
