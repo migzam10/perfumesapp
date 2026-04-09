@@ -21,25 +21,64 @@ async function loadCompras() {
 
 function renderCompraTipos() {
   const c = document.getElementById('c-tipo-chips');
-  c.innerHTML = S.tipos.map(t=>
-    `<div class="chip" onclick="cSelectTipo(${t.id},${t.lleva_tamano})">${t.nombre}</div>`
+  
+  const allOn = S.cTipoId === 'all' ? 'on' : '';
+
+  // Agregamos el botón "Todos" y luego el resto de categorías
+  c.innerHTML = `<div class="chip ${allOn}" onclick="cSelectTipo('all')">Todos</div>` + 
+    S.tipos.map(t =>
+      `<div class="chip ${S.cTipoId == t.id ? 'on' : ''}" onclick="cSelectTipo(${t.id},${t.lleva_tamano})">${t.nombre}</div>`
   ).join('');
-  document.getElementById('c-prods').innerHTML='';
+  
+  // Llamamos a la lista para que no inicie vacía
+  renderCompraProds();
 }
 
 function cSelectTipo(tipoId, llevaTamano) {
-  document.querySelectorAll('#c-tipo-chips .chip').forEach(c=>c.classList.remove('on'));
-  event.target.classList.add('on');
-  const prods = S.productos.filter(p=>p.tipo_id==tipoId);
-  // Para compras mostramos TODOS los productos activos (no solo con stock)
-  api('productos').then(allProds => {
-    const filtered = allProds.filter(p=>p.tipo_id==tipoId && p.activo==1);
-    document.getElementById('c-prods').innerHTML = filtered.map(p=>`
-      <div class="pcard" onclick="cAddProd(${p.id},'${esc(p.nombre+(p.tamano_nombre?' '+p.tamano_nombre:''))}',${p.stock})">
-        <div class="pn">${p.nombre}${p.tamano_nombre?' '+p.tamano_nombre:''}</div>
-        <div class="pp">Stock: ${p.stock}</div>
-      </div>`).join('') || '<div class="empty">Sin productos de este tipo</div>';
-  });
+  document.querySelectorAll('#c-tipo-chips .chip').forEach(c => c.classList.remove('on'));
+  if (event && event.target) event.target.classList.add('on');
+  
+  // Guardamos el tipo seleccionado en el estado global
+  S.cTipoId = tipoId;
+  
+  // Limpiamos el buscador al cambiar de categoría
+  const searchInput = document.getElementById('compra-search');
+  if (searchInput) searchInput.value = '';
+
+  // Llamamos a la nueva función que renderiza y filtra
+  renderCompraProds();
+}
+
+function renderCompraProds() {
+  // Si no hay ninguna categoría seleccionada, mostramos un mensaje y nos detenemos
+  if (!S.cTipoId) {
+    document.getElementById('c-prods').innerHTML = '';
+    return;
+  }
+
+  const tipo = S.cTipoId;
+
+  // 1. Filtramos: Si es 'all' trae todos los activos, si no, filtra por el tipo
+  let filtered = tipo === 'all' 
+    ? S.productos.filter(p => p.activo == 1)
+    : S.productos.filter(p => p.tipo_id == tipo && p.activo == 1);
+
+  // 2. Filtramos por la búsqueda de texto
+  const searchInput = document.getElementById('compra-search');
+  const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+  
+  if (query) {
+    filtered = filtered.filter(p =>
+      `${p.nombre} ${p.tamano_nombre || ''} ${p.tipo_nombre || ''}`.toLowerCase().includes(query)
+    );
+  }
+
+  // 3. Renderizamos el HTML
+  document.getElementById('c-prods').innerHTML = filtered.map(p => `
+    <div class="pcard" onclick="cAddProd(${p.id},'${esc(p.nombre + (p.tamano_nombre ? ' ' + p.tamano_nombre : ''))}',${p.stock})">
+      <div class="pn">${p.nombre}${p.tamano_nombre ? ' ' + p.tamano_nombre : ''}</div>
+      <div class="pp">Stock: ${p.stock}</div>
+    </div>`).join('') || '<div class="empty">Sin productos encontrados</div>';
 }
 
 function cAddProd(id, desc, stock) {
@@ -164,4 +203,8 @@ async function eliminarCompraItem(itemId) {
     toast('Ítem eliminado');
     await verCompraDia(S.compraDetalleFecha);
   } catch (e) {}
+}
+
+function filterCompProds() {
+renderCompraProds();
 }

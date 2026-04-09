@@ -10,6 +10,9 @@
     </div>
     <div class="sec">Buscar y agregar producto</div>
     <div class="chips" id="c-tipo-chips"></div>
+    <div class="search-box">
+      <input type="text" id="compra-search" placeholder="Buscar producto por nombre..." oninput="filterCompProds()">
+    </div>
     <div class="pgrid" id="c-prods"></div>
     <div id="c-cart-wrap" style="display:none">
       <div class="divider"></div>

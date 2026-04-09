@@ -9,11 +9,10 @@
     <div class="sec">Tipo de producto</div>
     <div class="chips" id="v-tipo-chips"></div>
 
-<!-- Buscador de productos -->
-<div class="search-box">
-  <input type="text" id="venta-search" placeholder="Buscar producto por nombre..." oninput="filterVentaProds()">
-</div>
-
+    <!-- Buscador de productos -->
+    <div class="search-box">
+      <input type="text" id="venta-search" placeholder="Buscar producto por nombre..." oninput="filterVentaProds()">
+    </div>
 
     <!-- Productos con tamaño -->
     <div id="v-sec-tamano" style="display:none">
@@ -29,12 +28,6 @@
       <div class="pgrid" id="v-prods-notamano"></div>
     </div>
 
-    <div class="row">
-      <div class="grp"><label>Precio ($)</label><input type="number" id="v-precio" placeholder="0"></div>
-      <div class="grp"><label>Cantidad</label><input type="number" id="v-cant" value="1" min="1"></div>
-    </div>
-    <div class="grp mb9"><label>Nota (opcional)</label><textarea id="v-nota-item" placeholder="+fragancia extra, color especial..."></textarea></div>
-    <button class="add-btn" onclick="cartAdd()">+ Agregar al carrito</button>
   </div>
 
   <div class="card" id="cart-card" style="display:none">

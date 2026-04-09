@@ -9,6 +9,10 @@ async function loadInventario() {
   const ac = document.getElementById('alerta-card');
   if(alertas.length) {
     ac.style.display='block';
+    
+    // Actualizamos el número en el contador rojo
+    document.getElementById('alerta-count').textContent = alertas.length;
+    
     document.getElementById('alerta-list').innerHTML = alertas.map(p=>`
       <div class="list-row">
         <div><div class="lr-name">${p.nombre}${p.tamano_nombre?' '+p.tamano_nombre:''}</div>
@@ -37,7 +41,18 @@ function invFilter(f) {
 }
 
 function renderInvList(prods) {
-  const filtered = S.invFiltro==='all' ? prods : prods.filter(p=>p.tipo_id==S.invFiltro);
+  // 1. Filtro por tipo (chips)
+  let filtered = S.invFiltro === 'all' ? prods : prods.filter(p => p.tipo_id == S.invFiltro);
+
+  // 2. Filtro por búsqueda de texto
+  const query = document.getElementById('inv-search').value.toLowerCase().trim();
+  if (query) {
+    filtered = filtered.filter(p =>
+      `${p.nombre} ${p.tamano_nombre || ''} ${p.tipo_nombre || ''}`.toLowerCase().includes(query)
+    );
+  }
+
+  // 3. Render
   document.getElementById('inv-list').innerHTML = filtered.map(p=>`
     <div class="list-row">
       <div>
@@ -59,4 +74,28 @@ async function checkAlertas() {
     b.style.display = a.length ? 'inline-block':'none';
     b.textContent = a.length || '';
   } catch(e){}
+}
+
+function filterInvProds() {
+  // Simplemente re-renderizamos la lista usando los productos guardados en memoria
+  renderInvList(S._invProds || []);
+}
+
+function toggleAlertas() {
+  const content = document.getElementById('alerta-content');
+  const arrow = document.getElementById('alerta-arrow');
+  
+  if (content.style.display === 'none') {
+    // Si está oculto, lo mostramos y giramos la flecha
+    content.style.display = 'block';
+    arrow.style.transform = 'rotate(180deg)';
+  } else {
+    // Si está visible, lo ocultamos y regresamos la flecha a su posición original
+    content.style.display = 'none';
+    arrow.style.transform = 'rotate(0deg)';
+    
+    // Opcional: Si el usuario le dio al botón de abajo, hacemos un poco de scroll hacia arriba
+    // para que la tarjeta vuelva a quedar a la vista
+    document.getElementById('alerta-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 }
