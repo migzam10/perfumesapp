@@ -917,3 +917,36 @@ textarea {
     justify-content: flex-end; /* En PC se ve más ordenado al final de la fila */
   }
 }
+/* ── Botón Flotante Carrito ──────────────────────────── */
+.fab-cart {
+  position: fixed;
+  bottom: 85px; /* Lo eleva para que no choque con el menú inferior */
+  right: 20px;
+  background: var(--gold); /* Usa el color dorado de tu tema */
+  color: #1a1520;
+  border: none;
+  border-radius: 30px;
+  padding: 10px 16px;
+  font-size: 1.3rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  cursor: pointer;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s, opacity 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.fab-cart:active {
+  transform: scale(0.92);
+}
+
+#fab-cart-count {
+  background: var(--err);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+}

@@ -7,17 +7,17 @@ function initVentaFecha() {
 }
 
 function renderVentaTipos() {
-  
-  
+
+
   const c = document.getElementById('v-tipo-chips');
-  
+
   const allOn = S.vTipoId === 'all' ? 'on' : '';
   c.innerHTML = `<div class="chip ${allOn}" onclick="vSelectTipo('all',0,'Todos')">Todos</div>` +
     S.tipos.filter(t => t.activo == 1).map(t =>
       `<div class="chip ${S.vTipoId == t.id ? 'on' : ''}" onclick="vSelectTipo(${t.id},${t.lleva_tamano},'${esc(t.nombre)}')">${t.nombre}</div>`
     ).join('');
 
-    // Si acabamos de entrar y no hay nada seleccionado, forzamos a mostrar
+  // Si acabamos de entrar y no hay nada seleccionado, forzamos a mostrar
   if (!S.vTipoId) {
     document.getElementById('v-sec-tamano').style.display = 'none';
     document.getElementById('v-sec-notamano').style.display = 'block';
@@ -88,7 +88,7 @@ function renderVentaProdsConTamano() {
 function renderVentaProdsSinTamano() {
   const g = document.getElementById('v-prods-notamano');
 
-if (!S.vTipoId) {
+  if (!S.vTipoId) {
     g.innerHTML = '<div class="empty" style="text-align:center; grid-column: 1 / -1;">Selecciona "Todos" o una categoría para ver los productos</div>';
     return;
   }
@@ -143,8 +143,22 @@ function vSelectProd(id) {
 
 function renderCart() {
   const card = document.getElementById('cart-card');
-  if (!S.cart.length) { card.style.display = 'none'; return; }
+  const fab = document.getElementById('btn-scroll-cart');
+
+  if (!S.cart.length) {
+    card.style.display = 'none';
+    if (fab) fab.style.display = 'none'; // Ocultamos el botón flotante si el carrito está vacío
+    return;
+  }
+
   card.style.display = 'block';
+
+  if (fab) {
+    fab.style.display = 'flex'; // Mostramos el botón
+    // Actualizamos el numerito con la cantidad total de artículos
+    const totalArticulos = S.cart.reduce((sum, item) => sum + item.cantidad, 0);
+    document.getElementById('fab-cart-count').textContent = totalArticulos;
+  }
 
   document.getElementById('cart-list').innerHTML = S.cart.map((i, idx) => `
     <div class="ci" style="flex-direction:column; gap:8px; padding:12px;">
@@ -235,12 +249,13 @@ async function ventaConfirmar() {
 
 }
 
-/**
- * Filtra los productos visibles en la pantalla de venta
- */
 function filterVentaProds() {
   // Simplemente re-renderizamos las listas actuales. 
   // Como las funciones de render ya incluyen la lógica de 'query', se filtrarán solas.
   if (S.vTipoTamano) renderVentaProdsConTamano();
   else renderVentaProdsSinTamano();
+}
+
+function scrollToCart() {
+  document.getElementById('cart-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }

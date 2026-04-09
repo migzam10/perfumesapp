@@ -38,4 +38,8 @@
     <button class="btn btn-p" onclick="ventaConfirmar()">✓ Confirmar Venta</button>
     <button class="btn btn-d mt8" onclick="cartClear()">✗ Limpiar carrito</button>
   </div>
+
+  <button id="btn-scroll-cart" class="fab-cart" style="display: none;" onclick="scrollToCart()">
+      🛒 <span id="fab-cart-count">0</span>
+    </button>
 </div>
