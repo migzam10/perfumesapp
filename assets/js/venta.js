@@ -215,14 +215,22 @@ function cartUpdate(idx, key, val) {
 function cartRemove(idx) { S.cart.splice(idx, 1); renderCart(); }
 function cartClear() { S.cart = []; renderCart(); }
 
+function vSetMetodo(val) {
+  S.vMetodo = val;
+  document.querySelectorAll('#v-metodo-pago .chip').forEach(c => 
+    c.classList.toggle('on', c.dataset.val === val)
+  );
+}
+
 async function ventaConfirmar() {
   if (!S.cart.length) { toast('El carrito está vacío', true); return; }
   const nota = document.getElementById('v-nota-venta').value.trim();
   const fecha = document.getElementById('v-fecha').value || todayStr();
   try {
-    const r = await api('ventas_nueva', { items: S.cart, nota, fecha }, 'POST');
+    const r = await api('ventas_nueva', { items: S.cart, nota, fecha, metodo_pago: S.vMetodo }, 'POST');
     toast(`✓ Venta ${r.codigo} — ${fmt(r.total)}`);
     S.cart = []; renderCart();
+    vSetMetodo('efectivo');
     document.getElementById('v-nota-venta').value = '';
     await loadProductosCatalogo();
     if (S.vTipoTamano) renderVentaProdsConTamano(); else if (S.vTipoId) renderVentaProdsSinTamano();

@@ -19,6 +19,7 @@ async function loadHistorial() {
         <div class="vi-hdr">
           <div><div class="vi-code">${v.codigo} · ${v.hora||''}</div>
             <div class="vi-seller">por ${v.vendedor||'—'}</div>
+            <div style="font-size:.7rem; color:var(--gold); font-weight:600; margin-top:2px">${v.metodo_pago === 'transferencia' ? '💳 Transferencia' : '💵 Efectivo'}</div>
             ${v.nota?`<div style="font-size:.68rem;color:var(--txt2);font-style:italic">${v.nota}</div>`:''}
           </div>
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">

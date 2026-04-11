@@ -87,8 +87,8 @@ function ventas_nueva(): void {
 
     $db->beginTransaction();
     try {
-        $db->prepare("INSERT INTO ventas (codigo, usuario_id, fecha, total, nota) VALUES (?,?,?,?,?)")
-           ->execute([$codigo, $sess['user_id'], $fecha, $total, $d['nota'] ?? null]);
+        $db->prepare("INSERT INTO ventas (codigo, usuario_id, fecha, total, metodo_pago, nota) VALUES (?,?,?,?,?,?)")
+           ->execute([$codigo, $sess['user_id'], $fecha, $total, $d['metodo_pago'] ?? 'efectivo', $d['nota'] ?? null]);
         $venta_id = $db->lastInsertId();
 
         $stmt = $db->prepare(

@@ -92,6 +92,14 @@ function renderCCart() {
   const wrap = document.getElementById('c-cart-wrap');
   if(!S.cCart.length){wrap.style.display='none';return;}
   wrap.style.display='block';
+  
+  let metodoHtml = `
+    <div class="sec">Método de Pago</div>
+    <div class="chips" style="margin-bottom:15px">
+      <div class="chip ${S.cMetodo==='efectivo'?'on':''}" onclick="cSetMetodo('efectivo')">Efectivo</div>
+      <div class="chip ${S.cMetodo==='transferencia'?'on':''}" onclick="cSetMetodo('transferencia')">Transferencia</div>
+    </div>`;
+
   document.getElementById('c-cart-list').innerHTML = S.cCart.map((i,idx)=>`
     <div class="ci" style="flex-direction:column;gap:6px">
       <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
@@ -105,12 +113,14 @@ function renderCCart() {
         <div class="grp"><label>Precio compra ($) <span style="color:var(--txt2)">(opc.)</span></label>
           <input type="number" value="${i.precio_compra}" placeholder="—" onchange="cCartUpdate(${idx},'precio_compra',this.value)"></div>
       </div>
-    </div>`).join('');
+    </div>`).join('') + metodoHtml;
 
   // Auto-calcular la suma si hay precios ingresados
   const sum = S.cCart.reduce((s,i) => s + (parseInt(i.cantidad||1) * (parseInt(i.precio_compra)||0)), 0);
   if (sum > 0) document.getElementById('c-total').value = sum;
 }
+
+function cSetMetodo(val) { S.cMetodo = val; renderCCart(); }
 
 function cCartRemove(idx) { 
   S.cCart.splice(idx,1); 
@@ -130,10 +140,13 @@ async function compraConfirmar() {
   if(!total){toast('Ingresa el total invertido',true);return;}
   const fecha = document.getElementById('c-fecha').value || todayStr();
   const nota  = document.getElementById('c-nota').value.trim();
+  const metodo_pago = S.cMetodo;
+
   try{
-    const r = await api('compras_nueva',{items:S.cCart,total,fecha,nota},'POST');
+    const r = await api('compras_nueva',{items:S.cCart,total,fecha,nota,metodo_pago},'POST');
     toast(`✓ Compra ${r.codigo} registrada`);
     S.cCart=[]; renderCCart();
+    S.cMetodo='efectivo';
     document.getElementById('c-total').value='';
     document.getElementById('c-nota').value='';
     await loadProductosCatalogo();
@@ -166,7 +179,7 @@ async function verCompraDia(fecha) {
     compras.map(c=>`
     <div class="vi">
       <div class="vi-hdr">
-        <div><div class="vi-code">${c.codigo}</div><div class="vi-seller">por ${c.usuario_nombre||'—'}</div></div>
+        <div><div class="vi-code">${c.codigo} <span class="badge ${c.metodo_pago==='transferencia'?'b-au':'b-ok'}" style="font-size:.65rem">${c.metodo_pago}</span></div><div class="vi-seller">por ${c.usuario_nombre||'—'}</div></div>
         <div class="vi-total">${fmt(c.total)}</div>
       </div>
       <div class="vi-items">${c.items.map(i=>`

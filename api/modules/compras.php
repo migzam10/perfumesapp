@@ -186,8 +186,8 @@ function compras_nueva(): void {
 
     $db->beginTransaction();
     try {
-        $db->prepare("INSERT INTO compras (codigo, usuario_id, fecha, total, nota) VALUES (?,?,?,?,?)")
-           ->execute([$codigo, $sess['user_id'], $fecha, $total, $nota]);
+        $db->prepare("INSERT INTO compras (codigo, usuario_id, fecha, total, nota, metodo_pago) VALUES (?,?,?,?,?,?)")
+           ->execute([$codigo, $sess['user_id'], $fecha, $total, $nota, $d['metodo_pago'] ?? 'efectivo']);
         $compra_id = $db->lastInsertId();
 
         $stmt = $db->prepare(

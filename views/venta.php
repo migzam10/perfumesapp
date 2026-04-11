@@ -34,6 +34,13 @@
     <div class="card-title">Carrito</div>
     <div id="cart-list"></div>
     <div class="total-bar"><div class="tl">Total</div><div class="tv" id="cart-total">$0</div></div>
+    
+    <div class="sec">Método de Pago</div>
+    <div class="chips" id="v-metodo-pago">
+      <div class="chip on" data-val="efectivo" onclick="vSetMetodo('efectivo')">Efectivo</div>
+      <div class="chip" data-val="transferencia" onclick="vSetMetodo('transferencia')">Transferencia</div>
+    </div>
+
     <div class="grp mb9"><label>Nota de la venta</label><textarea id="v-nota-venta" placeholder="Nombre del cliente, observaciones..."></textarea></div>
     <button class="btn btn-p" onclick="ventaConfirmar()">✓ Confirmar Venta</button>
     <button class="btn btn-d mt8" onclick="cartClear()">✗ Limpiar carrito</button>

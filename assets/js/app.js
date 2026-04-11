@@ -12,8 +12,10 @@ const S = {
   vTipo: null, vTipoId: null, vTipoTamano: false,
   vSizeId: null, vProdId: null,
   cart: [],
+  vMetodo: 'efectivo',
   // compra
   cCart: [],
+  cMetodo: 'efectivo',
   compraDetalleFecha: null,
   compraDetalleItems: [],
   // admin

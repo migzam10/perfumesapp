@@ -53,7 +53,7 @@ async function verDiaDetalle(fecha) {
     ventas.map(v=>`
     <div class="vi">
       <div class="vi-hdr">
-        <div><div class="vi-code">${v.codigo}</div><div class="vi-seller">por ${v.vendedor||'—'}</div></div>
+        <div><div class="vi-code">${v.codigo} <span class="badge ${v.metodo_pago==='transferencia'?'b-au':'b-ok'}" style="font-size:.6rem">${v.metodo_pago}</span></div><div class="vi-seller">por ${v.vendedor||'—'}</div></div>
         <div class="vi-total">${fmt(v.total)}</div>
       </div>
       <div class="vi-items">${v.items.map(i=>`
