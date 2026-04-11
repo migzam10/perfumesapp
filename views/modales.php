@@ -36,7 +36,7 @@
     <div class="grp mb9"><label>Nombre</label><input type="text" id="mp-nombre" placeholder="Nombre del producto"></div>
     <div class="grp mb9" id="mp-tam-grp" style="display:none"><label>Tamaño</label><select id="mp-tamano"></select></div>
     <div class="row">
-      <div class="grp"><label>Precio base ($)</label><input type="number" id="mp-precio" placeholder="0"></div>
+      <div class="grp"><label>Precio Venta ($)</label><input type="number" id="mp-precio" placeholder="0"></div>
       <div class="grp"><label>Stock mínimo</label><input type="number" id="mp-minimo" value="5"></div>
     </div>
     <div class="grp mb9">

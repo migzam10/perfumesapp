@@ -46,7 +46,7 @@ async function verDiaDetalle(fecha) {
   document.getElementById('view-dia-detalle').classList.add('on');
 
   const ventas = await api(`ventas_dia&fecha=${fecha}`);
-  const total  = ventas.reduce((s,v)=>s+v.total,0);
+  const total  = ventas.reduce((s,v)=>s+ parseFloat(v.total || 0), 0);
   const el = document.getElementById('dia-det-list');
   if(!ventas.length){el.innerHTML='<div class="empty">Sin ventas ese día</div>';return;}
   el.innerHTML = `<div style="font-size:.78rem;color:var(--txt2);margin-bottom:10px">${ventas.length} ventas · Total: <b style="color:var(--gold)">${fmt(total)}</b></div>` +
@@ -57,7 +57,7 @@ async function verDiaDetalle(fecha) {
         <div class="vi-total">${fmt(v.total)}</div>
       </div>
       <div class="vi-items">${v.items.map(i=>`
-        <div class="vi-irow"><span>${i.cantidad>1?i.cantidad+'× ':''} ${i.descripcion}${i.nota?' — <em>'+i.nota+'</em>':''}</span><span>${fmt(i.precio*i.cantidad)}</span></div>`).join('')}
+        <div class="vi-irow"><span>${i.cantidad>1?i.cantidad+'× ':''} ${i.descripcion}${i.nota?' — <em>'+i.nota+'</em>':''}</span><span>${fmt(Math.round(i.precio*i.cantidad))}</span></div>`).join('')}
       </div>
     </div>`).join('');
 }

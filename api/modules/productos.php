@@ -49,7 +49,7 @@ function productos_save(): void {
     $tipo_id    = (int)($d['tipo_id'] ?? 0);
     $nombre     = trim($d['nombre'] ?? '');
     $tamano_id  = !empty($d['tamano_id']) ? (int)$d['tamano_id'] : null;
-    $precio     = (int)($d['precio_base'] ?? 0);
+    $precio     = (float)($d['precio_base'] ?? 0);
     $minimo     = (int)($d['stock_minimo'] ?? 5);
     $unidad     = trim($d['unidad'] ?? 'uds');
 
@@ -139,8 +139,8 @@ function productos_add_stock(): void {
     $d        = requestBody();
     $id       = (int)($d['id'] ?? 0);
     $cantidad = (int)($d['cantidad'] ?? 0);
-    $precio_total = !empty($d['precio_compra']) ? (int)$d['precio_compra'] : null;
-    $precio_unit  = !empty($d['precio_unitario']) ? (int)$d['precio_unitario'] : null;
+    $precio_total = !empty($d['precio_compra']) ? (float)$d['precio_compra'] : null;
+    $precio_unit  = !empty($d['precio_unitario']) ? (float)$d['precio_unitario'] : null;
     $fecha    = $d['fecha'] ?? date('Y-m-d');
 
     if (!$id || $cantidad <= 0) jsonError('Producto y cantidad son obligatorios');

@@ -76,7 +76,7 @@ function update_compra_total(int $compra_id): void {
     $sum = $db->prepare("SELECT SUM(cantidad * precio_compra) AS total FROM compra_items WHERE compra_id = ?");
     $sum->execute([$compra_id]);
     $total = $sum->fetchColumn();
-    $total = $total === null ? 0 : (int)$total;
+    $total = $total === null ? 0 : (float)$total;
     $db->prepare("UPDATE compras SET total = ? WHERE id = ?")->execute([$total, $compra_id]);
 }
 
@@ -92,7 +92,7 @@ function compras_item_update(): void {
     if (!$descripcion) jsonError('Descripción requerida');
     if (!$cantidad) jsonError('Cantidad inválida');
 
-    $precio_compra = isset($d['precio_compra']) && $d['precio_compra'] !== '' ? (int)$d['precio_compra'] : null;
+    $precio_compra = isset($d['precio_compra']) && $d['precio_compra'] !== '' ? (float)$d['precio_compra'] : null;
 
     $db = db();
     $item = $db->prepare("SELECT * FROM compra_items WHERE id = ?");
@@ -178,7 +178,7 @@ function compras_nueva(): void {
 
     if (empty($d['items']) || !count($d['items'])) jsonError('La compra no tiene ítems');
 
-    $total  = (int)($d['total'] ?? 0);  // total manual — reemplaza todo
+    $total  = (float)($d['total'] ?? 0);  // total manual — reemplaza todo
     $fecha  = $d['fecha'] ?? date('Y-m-d');
     $nota   = $d['nota'] ?? null;
     $codigo = genCodigo('C');
@@ -199,7 +199,7 @@ function compras_nueva(): void {
                 $item['producto_id'],
                 $item['descripcion'],
                 $item['cantidad'],
-                !empty($item['precio_compra']) ? (int)$item['precio_compra'] : null,
+                !empty($item['precio_compra']) ? (float)$item['precio_compra'] : null,
             ]);
             // Sumar al stock
             $db->prepare("UPDATE productos SET stock = stock + ? WHERE id=?")

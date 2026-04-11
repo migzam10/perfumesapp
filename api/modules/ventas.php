@@ -55,7 +55,7 @@ function ventas_nueva(): void {
         jsonError('La venta no tiene ítems');
     }
 
-    $total  = array_sum(array_map(fn($i) => $i['precio'] * ($i['cantidad'] ?? 1), $d['items']));
+    $total  = (float)round(array_sum(array_map(fn($i) => $i['precio'] * ($i['cantidad'] ?? 1), $d['items'])));
     $codigo = genCodigo('V');
     $fecha  = $d['fecha'] ?? date('Y-m-d');
     $db     = db();

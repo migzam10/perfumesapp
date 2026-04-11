@@ -2,7 +2,12 @@
 // CONSTANTS & STATE
 // ============================================================
 
-const fmt = n => '$' + Number(n||0).toLocaleString('es-CO');
+const fmt = n => {
+  return '$' + Number(n || 0).toLocaleString('es-CO', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  });
+};
 const fmtD = d => { if(!d) return ''; const [y,m,dd]=d.split('-'); return `${dd}/${m}/${y}`; };
 const todayStr = () => new Date().toISOString().split('T')[0];
 

@@ -172,18 +172,18 @@ async function verCompraDia(fecha) {
   S.compraDetalleFecha = fecha;
   const compras = await api(`compras_dia_detalle&fecha=${fecha}`);
   S.compraDetalleItems = compras;
-  const total  = compras.reduce((s,c)=>s+c.total,0);
+  const total  = compras.reduce((s,c)=> s + parseFloat(c.total || 0), 0);
   const el = document.getElementById('compra-det-list');
   if(!compras.length){el.innerHTML='<div class="empty">Sin compras ese día</div>';return;}
-  el.innerHTML = `<div style="font-size:.78rem;color:var(--txt2);margin-bottom:10px">${compras.length} compras · Total: <b style="color:var(--gold)">${fmt(total)}</b></div>` +
+  el.innerHTML = `<div style="font-size:.78rem;color:var(--txt2);margin-bottom:10px">${compras.length} compras · Total: <b style="color:var(--gold)">${fmt(Math.round(total))}</b></div>` +
     compras.map(c=>`
     <div class="vi">
       <div class="vi-hdr">
         <div><div class="vi-code">${c.codigo} <span class="badge ${c.metodo_pago==='transferencia'?'b-au':'b-ok'}" style="font-size:.65rem">${c.metodo_pago}</span></div><div class="vi-seller">por ${c.usuario_nombre||'—'}</div></div>
-        <div class="vi-total">${fmt(c.total)}</div>
+        <div class="vi-total">${fmt(Math.round(c.total))}</div>
       </div>
       <div class="vi-items">${c.items.map(i=>`
-          <div class="vi-irow"><span>${i.cantidad>1?i.cantidad+' × ':''} ${i.descripcion} ${i.precio_compra ? `<em style="font-size:.68rem;color:var(--txt2)">(${fmt(i.precio_compra)} c/u)</em>` : ''}</span><span>${i.precio_compra ? fmt(i.precio_compra * i.cantidad) : '—'}</span></div>
+          <div class="vi-irow"><span>${i.cantidad>1?i.cantidad+' × ':''} ${i.descripcion} ${i.precio_compra ? `<em style="font-size:.68rem;color:var(--txt2)">(${fmt(i.precio_compra)} c/u)</em>` : ''}</span><span>${i.precio_compra ? fmt(Math.round(i.precio_compra * i.cantidad)) : '—'}</span></div>
           <div class="vi-irow" style="gap:8px;margin:4px 0 10px">
             <button class="bsm bsm-g" onclick="editarCompraItem(${i.id})">Editar</button>
             <button class="bsm bsm-d" onclick="eliminarCompraItem(${i.id})">Eliminar</button>

@@ -167,13 +167,17 @@ function renderCart() {
         <button class="ci-del" onclick="cartRemove(${idx})">×</button>
       </div>
       <div class="row" style="margin-bottom:0; gap:8px;">
-        <div class="grp">
+        <div class="grp" style="flex: 2;">
           <label>Cant.</label>
-          <input type="number" value="${i.cantidad}" min="1" oninput="cartUpdate(${idx},'cantidad',this.value)">
+          <input type="number" id="cart-qty-${idx}" value="${i.cantidad}" min="1" oninput="cartUpdate(${idx},'cantidad',this.value)">
         </div>
-        <div class="grp">
+        <div class="grp" style="flex: 4;">
           <label>Precio Unit.</label>
-          <input type="number" value="${i.precio}" oninput="cartUpdate(${idx},'precio',this.value)">
+          <input type="number" id="cart-price-${idx}" value="${i.precio}" oninput="cartUpdate(${idx},'precio',this.value)">
+        </div>
+        <div class="grp" style="flex: 4;">
+          <label>Subtotal</label>
+          <input type="number" id="cart-sub-${idx}" value="${Math.round(i.precio * i.cantidad)}" oninput="cartUpdate(${idx},'subtotal',this.value)">
         </div>
       </div>
       <div class="row" style="width:100%; margin-bottom:0; gap:8px;">
@@ -181,35 +185,46 @@ function renderCart() {
           <textarea style="height:40px; font-size:.8rem;" placeholder="Nota del producto..." oninput="cartUpdate(${idx},'nota',this.value)">${i.nota || ''}</textarea>
         </div>
       </div>
-      <div id="subtotal-${idx}" style="text-align:right; font-family:'Playfair Display'; color:var(--gold); font-size:1.1rem;">
-        Subtotal: ${fmt(i.precio * i.cantidad)}
-      </div>
     </div>`).join('');
-  document.getElementById('cart-total').textContent = fmt(S.cart.reduce((s, i) => s + i.precio * i.cantidad, 0));
+  document.getElementById('cart-total').textContent = fmt(Math.round(S.cart.reduce((s, i) => s + i.precio * i.cantidad, 0)));
 }
 
 function cartUpdate(idx, key, val) {
   const item = S.cart[idx];
   if (!item) return;
 
+  const qtyEl = document.getElementById(`cart-qty-${idx}`);
+  const priceEl = document.getElementById(`cart-price-${idx}`);
+  const subEl = document.getElementById(`cart-sub-${idx}`);
+
   if (key === 'cantidad') {
     const n = Math.max(1, parseInt(val) || 1);
-    // Validar stock al editar manualmente
     if (n > item.stock) {
       toast(`Stock insuficiente. Máximo disponible: ${item.stock}`, true);
       item.cantidad = item.stock;
+      if(qtyEl) qtyEl.value = item.stock;
     } else {
       item.cantidad = n;
     }
+    // Sincronizar Subtotal
+    if(subEl) subEl.value = Math.round(item.precio * item.cantidad);
+
   } else if (key === 'precio') {
-    item.precio = Math.max(0, parseInt(val) || 0);
+    item.precio = Math.max(0, parseFloat(val) || 0);
+    // Sincronizar Subtotal
+    if(subEl) subEl.value = Math.round(item.precio * item.cantidad);
+
+  } else if (key === 'subtotal') {
+    const subtotal = Math.max(0, parseFloat(val) || 0);
+    // Sincronizar Precio Unitario con precisión decimal
+    item.precio = Number((subtotal / item.cantidad).toFixed(2));
+    if(priceEl) priceEl.value = item.precio;
+
   } else {
     item[key] = val;
   }
 
-  // Actualizar solo el total visual sin re-renderizar todo el HTML para no perder el foco del input
-  document.getElementById(`subtotal-${idx}`).textContent = `Subtotal: ${fmt(item.precio * item.cantidad)}`;
-  document.getElementById('cart-total').textContent = fmt(S.cart.reduce((s, i) => s + i.precio * i.cantidad, 0));
+  document.getElementById('cart-total').textContent = fmt(Math.round(S.cart.reduce((s, i) => s + i.precio * i.cantidad, 0)));
 }
 
 function cartRemove(idx) { S.cart.splice(idx, 1); renderCart(); }
