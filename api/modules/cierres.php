@@ -122,10 +122,23 @@ function reportes_resumen(): void {
     $hoy_stats->execute([$hoy]);
     $h = $hoy_stats->fetch();
 
+    // Compras y Gastos de hoy
+    $hoy_comp = $db->prepare("SELECT COALESCE(SUM(total),0) FROM compras WHERE fecha = ?");
+    $hoy_comp->execute([$hoy]);
+    $h_comp = $hoy_comp->fetchColumn() ?: 0;
+
+    $hoy_gas = $db->prepare("SELECT COALESCE(SUM(total),0) FROM gastos WHERE fecha = ?");
+    $hoy_gas->execute([$hoy]);
+    $h_gas = $hoy_gas->fetchColumn() ?: 0;
+
     $total_acum = $db->query("SELECT COALESCE(SUM(total),0) FROM ventas")->fetchColumn();
 
     $dias_count = $db->query("SELECT COUNT(DISTINCT fecha) FROM ventas")->fetchColumn();
     $prom_dia   = $dias_count > 0 ? round($total_acum / $dias_count) : 0;
+
+    $ventas_mes = $db->prepare("SELECT COUNT(*) AS num, COALESCE(SUM(total),0) AS total FROM ventas WHERE fecha >= ? AND fecha <= ?");
+    $ventas_mes->execute([date('Y-m-01'), date('Y-m-t')]);
+    $ventas_mes_data = $ventas_mes->fetch();
 
     $top = $db->query(
         "SELECT descripcion, COUNT(*) AS veces, SUM(precio * cantidad) AS total
@@ -137,9 +150,59 @@ function reportes_resumen(): void {
 
     jsonOk([
         'hoy'       => $h,
+        'hoy_comp'  => $h_comp,
+        'hoy_gas'   => $h_gas,
         'acumulado' => $total_acum,
         'prom_dia'  => $prom_dia,
         'top'       => $top,
+        'ventas_mes' => $ventas_mes_data
+
+    ]);
+}
+
+function reportes_dia_full(): void {
+    requireAuth();
+    $fecha = $_GET['fecha'] ?? date('Y-m-d');
+    $db = db();
+
+    // Ventas
+    $v_stmt = $db->prepare("SELECT v.*, u.nombre AS vendedor FROM ventas v LEFT JOIN usuarios u ON v.usuario_id = u.id WHERE v.fecha = ?");
+    $v_stmt->execute([$fecha]);
+    $ventas = $v_stmt->fetchAll();
+    foreach($ventas as &$v) {
+        $si = $db->prepare("SELECT * FROM venta_items WHERE venta_id = ?");
+        $si->execute([$v['id']]);
+        $v['items'] = $si->fetchAll();
+    }
+
+    // Compras
+    $c_stmt = $db->prepare("SELECT c.*, u.nombre AS usuario_nombre FROM compras c LEFT JOIN usuarios u ON c.usuario_id = u.id WHERE c.fecha = ?");
+    $c_stmt->execute([$fecha]);
+    $compras = $c_stmt->fetchAll();
+    foreach($compras as &$c) {
+        $si = $db->prepare("SELECT * FROM compra_items WHERE compra_id = ?");
+        $si->execute([$c['id']]);
+        $c['items'] = $si->fetchAll();
+    }
+
+    // Gastos
+    $g_stmt = $db->prepare("SELECT g.*, u.nombre AS usuario_nombre FROM gastos g LEFT JOIN usuarios u ON g.usuario_id = u.id WHERE g.fecha = ?");
+    $g_stmt->execute([$fecha]);
+    $gastos = $g_stmt->fetchAll();
+    foreach($gastos as &$g) {
+        $si = $db->prepare("SELECT * FROM gasto_items WHERE gasto_id = ?");
+        $si->execute([$g['id']]);
+        $g['items'] = $si->fetchAll();
+    }
+
+    jsonOk([
+        'fecha' => $fecha,
+        'ventas' => $ventas,
+        'total_ventas' => array_sum(array_column($ventas, 'total')),
+        'compras' => $compras,
+        'total_compras' => array_sum(array_column($compras, 'total')),
+        'gastos' => $gastos,
+        'total_gastos' => array_sum(array_column($gastos, 'total'))
     ]);
 }
 
@@ -190,5 +253,52 @@ function reportes_dashboard(): void {
         'ventas_dias'   => $ventas_dia->fetchAll(),
         'top_productos' => $top_vendidos->fetchAll(),
         'ventas_tipos'  => $ventas_tipo->fetchAll()
+    ]);
+}
+
+function reportes_financiero(): void {
+    requireAuth();
+    $desde = $_GET['desde'] ?? date('Y-m-01');
+    $hasta = $_GET['hasta'] ?? date('Y-m-t');
+    $db = db();
+
+    // Ventas detalladas
+    $v_stmt = $db->prepare("SELECT v.*, u.nombre AS vendedor FROM ventas v LEFT JOIN usuarios u ON v.usuario_id = u.id WHERE v.fecha BETWEEN ? AND ? ORDER BY v.fecha ASC, v.creado_en ASC");
+    $v_stmt->execute([$desde, $hasta]);
+    $ventas = $v_stmt->fetchAll();
+    foreach($ventas as &$v) {
+        $si = $db->prepare("SELECT * FROM venta_items WHERE venta_id = ?");
+        $si->execute([$v['id']]);
+        $v['items'] = $si->fetchAll();
+    }
+
+    // Compras detalladas
+    $c_stmt = $db->prepare("SELECT c.*, u.nombre AS usuario_nombre FROM compras c LEFT JOIN usuarios u ON c.usuario_id = u.id WHERE c.fecha BETWEEN ? AND ? ORDER BY c.fecha ASC, c.creado_en ASC");
+    $c_stmt->execute([$desde, $hasta]);
+    $compras = $c_stmt->fetchAll();
+    foreach($compras as &$c) {
+        $si = $db->prepare("SELECT * FROM compra_items WHERE compra_id = ?");
+        $si->execute([$c['id']]);
+        $c['items'] = $si->fetchAll();
+    }
+
+    // Gastos detallados
+    $g_stmt = $db->prepare("SELECT g.*, u.nombre AS usuario_nombre FROM gastos g LEFT JOIN usuarios u ON g.usuario_id = u.id WHERE g.fecha BETWEEN ? AND ? ORDER BY g.fecha ASC, g.creado_en ASC");
+    $g_stmt->execute([$desde, $hasta]);
+    $gastos = $g_stmt->fetchAll();
+    foreach($gastos as &$g) {
+        $si = $db->prepare("SELECT * FROM gasto_items WHERE gasto_id = ?");
+        $si->execute([$g['id']]);
+        $g['items'] = $si->fetchAll();
+    }
+
+    jsonOk([
+        'ventas' => $ventas,
+        'total_ventas' => array_sum(array_column($ventas, 'total')),
+        'compras' => $compras,
+        'total_compras' => array_sum(array_column($compras, 'total')),
+        'gastos' => $gastos,
+        'total_gastos' => array_sum(array_column($gastos, 'total')),
+        'neto' => array_sum(array_column($ventas, 'total')) - array_sum(array_column($compras, 'total')) - array_sum(array_column($gastos, 'total'))
     ]);
 }

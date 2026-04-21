@@ -1,5 +1,8 @@
 <div id="view-dashboard" class="view">
-    <div class="hdr-title">Dashboard y Estadísticas</div>
+    <div class="card-hdr">
+        <div class="card-tittle">Dashboard y Estadísticas</div> 
+        <button class="bsm bsm-g" onclick="nav('informe-financiero')">Reportes</button>
+    </div>
 
     <div class="dashboard-grid" style="display: grid; gap: 20px; padding: 20px;">
         <!-- Gráfica de línea: Ventas del mes -->

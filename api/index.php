@@ -8,6 +8,7 @@ require_once __DIR__ . '/modules/productos.php';
 require_once __DIR__ . '/modules/ventas.php';
 require_once __DIR__ . '/modules/cierres.php';
 require_once __DIR__ . '/modules/compras.php';
+require_once __DIR__ . '/modules/gastos.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
@@ -59,7 +60,9 @@ $routes = [
     // Reportes
     'reportes_dias'         => ['reportes_dias',         'GET'],
     'reportes_resumen'      => ['reportes_resumen',      'GET'],
+    'reportes_dia_full'     => ['reportes_dia_full',     'GET'],
     'reportes_dashboard'    => ['reportes_dashboard',    'GET'],
+    'reportes_financiero'   => ['reportes_financiero',   'GET'],
 
     // Compras
     'compras_lista'         => ['compras_lista',         'GET'],
@@ -69,6 +72,16 @@ $routes = [
     'compras_item_update'   => ['compras_item_update',   'POST'],
     'compras_item_delete'   => ['compras_item_delete',   'POST'],
     'compras_nueva'         => ['compras_nueva',         'POST'],
+
+    // Gastos
+    'gastos_lista'          => ['gastos_lista',          'GET'],
+    'gastos_por_dia'        => ['gastos_por_dia',        'GET'],
+    'gastos_dia_detalle'    => ['gastos_dia_detalle',    'GET'],
+    'gastos_item_update'    => ['gastos_item_update',    'POST'],
+    'gastos_item_delete'    => ['gastos_item_delete',   'POST'],
+    'gastos_nueva'          => ['gastos_nueva',          'POST'],
+
+                
 ];
 
 if (!isset($routes[$action])) {

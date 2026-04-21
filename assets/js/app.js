@@ -21,6 +21,11 @@ const S = {
   // compra
   cCart: [],
   cMetodo: 'efectivo',
+  // gastos
+  gCart: [],
+  gMetodo: 'efectivo',
+  gastoDetalleFecha: null,
+  
   compraDetalleFecha: null,
   compraDetalleItems: [],
   // admin
@@ -79,7 +84,9 @@ function nav(v) {
   if(v==='inventario') loadInventario();
   if(v==='reportes')   loadReportes();
   if(v==='cierre')     loadCierre();
+  if(v==='informe-financiero') initInformeFinanciero();
   if(v==='compras')    loadCompras();
+  if(v==='gastos')     loadGastos();
   if(v==='admin')      loadAdmin();
 }
 

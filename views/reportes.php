@@ -11,14 +11,19 @@
   </div>
 </div>
 
-<!-- ═══ DETALLE DÍA (sub-vista de reportes) ═════════════ -->
+<!-- ═══ DETALLE DÍA FULL ════════════════════════════════ -->
 <div class="view" id="view-dia-detalle">
-  <div class="card">
-    <div class="card-hdr">
-      <div class="card-title" id="dia-det-title">Detalle del día</div>
+  <div class="card" style="margin-bottom: 80px;">
+    <div class="card-hdr" style="position: sticky; top: 0; background: var(--s1); z-index: 10; padding: 10px 0;">
+      <div>
+        <div class="card-title" id="dia-det-title">Detalle del día</div>
+        <div id="dia-det-resumen" style="font-size: 0.8rem; color: var(--txt2); margin-top: 4px;"></div>
+      </div>
       <button class="bsm bsm-g" onclick="nav('reportes')">← Volver</button>
     </div>
-    <div id="dia-det-list"><div class="loader">Cargando...</div></div>
+    
+    <div id="dia-det-ventas-section"></div>
+    <div id="dia-det-compras-section"></div>
+    <div id="dia-det-gastos-section"></div>
   </div>
 </div>
-

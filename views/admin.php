@@ -58,6 +58,16 @@
         </div>
     </div>
 
+    <!-- Gastos -->
+     <div class="card">
+        <div class="card-hdr">
+            <div class="card-title">Gastos
+            </div>
+            <button class="bsm bsm-p" onclick="nav('gastos')">+ Nuevo</button>
+        </div>
+       
+    </div>
+
     <!-- Usuarios -->
     <div class="card" id="admin-users-card">
         <div class="card-hdr" style="cursor: pointer;" onclick="toggleAdminUsers()">

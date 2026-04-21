@@ -99,6 +99,20 @@ function renderAdminProds(prods) {
   document.getElementById('admin-prods-list').innerHTML = html;
 }
 
+
+function renderAdminUsers(users) {
+    
+  document.getElementById('admin-users-list').innerHTML =  users.map(u=>`
+    <div class="list-row">
+      <div><div class="lr-name">${u.nombre} <span class="badge ${u.activo?'b-ok':'b-of'}">${u.activo?'Activo':'Inactivo'}</span></div>
+        <div class="lr-sub"><span class="badge ${u.rol==='admin'?'b-au':'b-ok'}">${u.rol}</span> · ${u.usuario}</div></div>
+      <div class="lr-right">
+        <button class="bsm bsm-g" onclick="editUser(${u.id})">Editar</button>
+        ${u.usuario!=='admin'?`<button class="bsm ${u.activo?'bsm-d':'bsm-p'}" onclick="toggleUser(${u.id})">${u.activo?'Desactivar':'Activar'}</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
 function toggleAdminProds() {
   const content = document.getElementById('admin-prods-content');
   const arrow = document.getElementById('admin-prods-arrow');
@@ -156,17 +170,6 @@ function toggleAdminUsers() {
 }
 
 
-function renderAdminUsers(users) {
-  document.getElementById('admin-users-list').innerHTML = users.map(u=>`
-    <div class="list-row">
-      <div><div class="lr-name">${u.nombre} <span class="badge ${u.activo?'b-ok':'b-of'}">${u.activo?'Activo':'Inactivo'}</span></div>
-        <div class="lr-sub"><span class="badge ${u.rol==='admin'?'b-au':'b-ok'}">${u.rol}</span> · ${u.usuario}</div></div>
-      <div class="lr-right">
-        <button class="bsm bsm-g" onclick="editUser(${u.id})">Editar</button>
-        ${u.usuario!=='admin'?`<button class="bsm ${u.activo?'bsm-d':'bsm-p'}" onclick="toggleUser(${u.id})">${u.activo?'Desactivar':'Activar'}</button>`:''}
-      </div>
-    </div>`).join('');
-}
 
 // ── CRUD Tipos ────────────────────────────────────────────
 function openModal(id) { document.getElementById(id).classList.add('on'); }
