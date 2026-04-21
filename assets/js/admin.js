@@ -99,6 +99,63 @@ function renderAdminProds(prods) {
   document.getElementById('admin-prods-list').innerHTML = html;
 }
 
+function toggleAdminProds() {
+  const content = document.getElementById('admin-prods-content');
+  const arrow = document.getElementById('admin-prods-arrow');
+  
+  if (content.style.display === 'none') {
+    content.style.display = 'block';
+    arrow.style.transform = 'rotate(180deg)';
+  } else {
+    content.style.display = 'none';
+    arrow.style.transform = 'rotate(0deg)';
+    document.getElementById('admin-prods-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function toggleAdminTipos() {
+  const content = document.getElementById('admin-tipos-content');
+  const arrow = document.getElementById('admin-tipos-arrow');
+  
+  if (content.style.display === 'none') {
+    content.style.display = 'block';
+    arrow.style.transform = 'rotate(180deg)';
+  } else {
+    content.style.display = 'none';
+    arrow.style.transform = 'rotate(0deg)';
+    document.getElementById('admin-tipos-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function toggleAdminTams() {
+  const content = document.getElementById('admin-tams-content');
+  const arrow = document.getElementById('admin-tams-arrow');
+  
+  if (content.style.display === 'none') {
+    content.style.display = 'block';
+    arrow.style.transform = 'rotate(180deg)';
+  } else {
+    content.style.display = 'none';
+    arrow.style.transform = 'rotate(0deg)';
+    document.getElementById('admin-tams-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function toggleAdminUsers() {
+  const content = document.getElementById('admin-users-content');
+  const arrow = document.getElementById('admin-users-arrow');
+  
+  if (content.style.display === 'none') {
+    content.style.display = 'block';
+    arrow.style.transform = 'rotate(180deg)';
+  } else {
+    content.style.display = 'none';
+    arrow.style.transform = 'rotate(0deg)';
+    document.getElementById('admin-users-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+
 function renderAdminUsers(users) {
   document.getElementById('admin-users-list').innerHTML = users.map(u=>`
     <div class="list-row">
