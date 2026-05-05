@@ -53,7 +53,21 @@ function renderInvList(prods) {
   }
 
   // 3. Render
-  document.getElementById('inv-list').innerHTML = filtered.map(p=>`
+  let totalValorVentaStock = 0;
+  let totalValorCostoStock = 0;
+  let totalUnidadesStock = 0;
+
+  filtered.forEach(p => {
+    const stock = parseInt(p.stock || 0);
+    const precioBase = parseFloat(p.precio_base || 0);
+    const costoPromedio = parseFloat(p.costo_promedio || 0);
+
+    totalValorVentaStock += (precioBase * stock);
+    totalValorCostoStock += (costoPromedio * stock);
+    totalUnidadesStock += stock;
+  });
+
+  const productsHtml = filtered.map(p=>`
     <div class="list-row">
       <div>
         <div class="lr-name">${p.nombre}${p.tamano_nombre?' '+p.tamano_nombre:''}</div>
@@ -64,7 +78,34 @@ function renderInvList(prods) {
         <span class="badge ${p.stock<=p.stock_minimo?'b-lo':'b-ok'}">${p.stock} ${p.unidad || 'uds'}</span>
         <span class="badge ${p.activo?'b-au':'b-of'}">${p.activo?'Activo':'Inactivo'}</span>
       </div>
-    </div>`).join('') || '<div class="empty">Sin productos</div>';
+    </div>`).join('');
+
+  let summaryHtml = '';
+  if (filtered.length > 0) {
+    summaryHtml = `
+      <div class="card" style="margin-top: 20px;">
+        <div class="card-title">Resumen del Inventario Filtrado</div>
+        <div class="list-row">
+          <div><div class="lr-name">Total Productos Diferentes</div></div>
+          <div class="lr-val">${filtered.length}</div>
+        </div>
+        <div class="list-row">
+          <div><div class="lr-name">Valor Total de Venta del Stock</div></div>
+          <div class="lr-val">${fmt(totalValorVentaStock)}</div>
+        </div>
+        <div class="list-row">
+          <div><div class="lr-name">Valor Total de Costo del Stock</div></div>
+          <div class="lr-val">${fmt(totalValorCostoStock)}</div>
+        </div>
+        <div class="list-row">
+          <div><div class="lr-name">Total Unidades en Stock</div></div>
+          <div class="lr-val">${totalUnidadesStock}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  document.getElementById('inv-list').innerHTML = productsHtml + (filtered.length > 0 ? summaryHtml : '<div class="empty">Sin productos</div>');
 }
 
 async function checkAlertas() {

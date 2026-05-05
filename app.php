@@ -128,7 +128,7 @@ $rol  = $sess['rol'];
   <script src="assets/js/app.js?v=4"></script>
   <script src="assets/js/venta.js?v=4"></script>
   <script src="assets/js/historial.js?v=4"></script>
-  <script src="assets/js/inventario.js?v=4"></script>
+  <script src="assets/js/inventario.js?v=4.1"></script>
   <script src="assets/js/reportes.js?v=4"></script>
   <script src="assets/js/cierre.js?v=4"></script>
   <script src="assets/js/compras.js?v=4"></script>
