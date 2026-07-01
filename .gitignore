@@ -20,7 +20,8 @@
 # Logs
 *.log
 
-# Guía interna de Claude Code
+# Claude Code
+.claude/
 CLAUDE.md
 
 # Scratch / temp

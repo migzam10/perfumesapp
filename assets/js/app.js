@@ -82,6 +82,7 @@ function nav(v) {
   document.querySelector(`.nb[data-view="${v}"]`)?.classList.add('on');
   if(v==='historial')  loadHistorial();
   if(v==='inventario') loadInventario();
+  if(v==='inventario-tabla') loadInventarioTabla();
   if(v==='reportes')   loadReportes();
   if(v==='cierre')     loadCierre();
   if(v==='informe-financiero') initInformeFinanciero();

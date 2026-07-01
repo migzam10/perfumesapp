@@ -101,6 +101,7 @@ function renderInvList(prods) {
           <div><div class="lr-name">Total Unidades en Stock</div></div>
           <div class="lr-val">${totalUnidadesStock}</div>
         </div>
+        <button class="btn btn-p mt8" onclick="nav('inventario-tabla')">Ver tabla completa</button>
       </div>
     `;
   }

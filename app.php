@@ -20,6 +20,7 @@ $rol  = $sess['rol'];
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/app.css?v=4">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <!-- OneSignal SDK -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
@@ -111,6 +112,7 @@ $rol  = $sess['rol'];
   include 'views/venta.php';
   include 'views/historial.php';
   include 'views/inventario.php';
+  include 'views/inventario_tabla.php';
   include 'views/modales.php';
   include 'views/reportes.php';
   include 'views/cierre.php';
@@ -125,10 +127,11 @@ $rol  = $sess['rol'];
   <script>
     const ROL = '<?= $rol ?>';
   </script>
-  <script src="assets/js/app.js?v=4"></script>
+  <script src="assets/js/app.js?v=4.1"></script>
   <script src="assets/js/venta.js?v=4"></script>
   <script src="assets/js/historial.js?v=4"></script>
-  <script src="assets/js/inventario.js?v=4.1"></script>
+  <script src="assets/js/inventario.js?v=4.2"></script>
+  <script src="assets/js/inventario_tabla.js?v=4"></script>
   <script src="assets/js/reportes.js?v=4"></script>
   <script src="assets/js/cierre.js?v=4"></script>
   <script src="assets/js/compras.js?v=4"></script>
