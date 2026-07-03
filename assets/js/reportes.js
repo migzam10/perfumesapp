@@ -121,12 +121,16 @@ async function loadInformeFinanciero() {
     document.getElementById('inf-resumen').innerHTML = '<div class="loader">Generando informe...</div>';
     
     const res = await api(`reportes_financiero&desde=${desde}&hasta=${hasta}`);
-    
+
+    // Guardamos la data y el rango para la vista de detalle línea por línea
+    S._infData  = res;
+    S._infRango = { desde, hasta };
+
     let html = `
         <div class="sgrid">
-            <div class="sbox"><div class="sv">${fmt(res.total_ventas)}</div><div class="sl">Ventas (${res.ventas.length})</div></div>
-            <div class="sbox"><div class="sv">${fmt(res.total_compras)}</div><div class="sl">Compras (${res.compras.length})</div></div>
-            <div class="sbox"><div class="sv">${fmt(res.total_gastos)}</div><div class="sl">Gastos (${res.gastos.length})</div></div>
+            <div class="sbox" style="cursor:pointer" onclick="verInfDetalle('ventas')" title="Ver detalle producto por producto"><div class="sv">${fmt(res.total_ventas)}</div><div class="sl">Ventas (${res.ventas.length}) ›</div></div>
+            <div class="sbox" style="cursor:pointer" onclick="verInfDetalle('compras')" title="Ver detalle producto por producto"><div class="sv">${fmt(res.total_compras)}</div><div class="sl">Compras (${res.compras.length}) ›</div></div>
+            <div class="sbox" style="cursor:pointer" onclick="verInfDetalle('gastos')" title="Ver detalle concepto por concepto"><div class="sv">${fmt(res.total_gastos)}</div><div class="sl">Gastos (${res.gastos.length}) ›</div></div>
             <div class="sbox"><div class="sv" style="color:${res.neto >= 0 ? 'var(--ok)' : 'var(--err)'}">${fmt(res.neto)}</div><div class="sl">Balance Neto</div></div>
         </div>
 

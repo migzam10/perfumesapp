@@ -120,6 +120,7 @@ $rol  = $sess['rol'];
   include 'views/admin.php';
   include 'views/gastos.php';
   include 'views/informe_financiero.php';
+  include 'views/informe_detalle.php';
 
   ?>
 
@@ -132,7 +133,8 @@ $rol  = $sess['rol'];
   <script src="assets/js/historial.js?v=4"></script>
   <script src="assets/js/inventario.js?v=4.2"></script>
   <script src="assets/js/inventario_tabla.js?v=4"></script>
-  <script src="assets/js/reportes.js?v=4"></script>
+  <script src="assets/js/reportes.js?v=4.1"></script>
+  <script src="assets/js/informe_detalle.js?v=4"></script>
   <script src="assets/js/cierre.js?v=4"></script>
   <script src="assets/js/compras.js?v=4"></script>
   <script src="assets/js/admin.js?v=4"></script>
